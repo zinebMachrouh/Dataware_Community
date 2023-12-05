@@ -452,6 +452,7 @@ include "../SQL/connect.php";
             }
 
             ?>
+            <a href="./community.php"><i class="fa-solid fa-comments"></i> Community</a>
             <a href="#" onclick="openMyPopup()"><i class="fa-solid fa-user"></i> Profile</a>
             <a href="./logout.php"><i class="fa-solid fa-arrow-right-from-bracket"></i> LogOut</a>
         </nav>
@@ -721,7 +722,7 @@ include "../SQL/connect.php";
                             <td>{$team['name']}</td>
                             <td>{$team['description']}</td>
                             <td>{$team['created_at']}</td>";
-                        
+
                         if ($teamProjectId === NULL) {
                             echo "<td>-</td>";
                         } else {
@@ -735,7 +736,6 @@ include "../SQL/connect.php";
                             echo "<td>{$sm['fname']} {$sm['lname']}</td>
                             </tr>";
                         }
-                        
                     }
 
                     echo "</table>
@@ -775,11 +775,11 @@ include "../SQL/connect.php";
                         $stmtPO->bindParam(':poId', $project['productOwner'], PDO::PARAM_INT);
                         $stmtPO->execute();
                         $po = $stmtPO->fetch(PDO::FETCH_ASSOC);
-                        
+
                         if ($project['productOwner'] === NULL) {
                             echo "<td>-</td>
                             </tr>";
-                        }else{
+                        } else {
                             echo "
                                 <td>{$po['fname']} {$po['lname']}</td>
                             </tr>";
