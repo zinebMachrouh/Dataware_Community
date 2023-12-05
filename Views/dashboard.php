@@ -661,7 +661,7 @@ include "../SQL/connect.php";
                     } else {
                         echo "<td>{$project['name']}</td>";
                     }
-                    echo "<td class='actions'><a href='./modifyTeam.php?modifyOne=" . $team['id'] . "'>Modify</a> <a href='./MEMBERS.php?teamId=" . $team['id'] . "'>Members</a> <a href='./deleteTeam.php?deleteOne=" . $team['id'] . "'>Delete</a></td>";
+                    echo "<td class='actions'><a href='./modifyTeam.php?teamId=" . $team['id'] . "'>Modify</a> <a href='./MEMBERS.php?teamId=" . $team['id'] . "'>Members</a> <a href='./deleteTeam.php?teamId=" . $team['id'] . "'>Delete</a></td>";
                 }
             } else {
 
@@ -720,10 +720,22 @@ include "../SQL/connect.php";
                         <tr>
                             <td>{$team['name']}</td>
                             <td>{$team['description']}</td>
-                            <td>{$team['created_at']}</td>
-                            <td>{$project['name']}</td>
-                            <td>{$sm['fname']} {$sm['lname']}</td>
-                        </tr>";
+                            <td>{$team['created_at']}</td>";
+                        
+                        if ($teamProjectId === NULL) {
+                            echo "<td>-</td>";
+                        } else {
+                            echo "<td>{$project['name']}</td>";
+                        }
+
+                        if ($team['scrumMaster'] === NULL) {
+                            echo "<td>-</td>
+                            </tr>";
+                        } else {
+                            echo "<td>{$sm['fname']} {$sm['lname']}</td>
+                            </tr>";
+                        }
+                        
                     }
 
                     echo "</table>
@@ -763,10 +775,15 @@ include "../SQL/connect.php";
                         $stmtPO->bindParam(':poId', $project['productOwner'], PDO::PARAM_INT);
                         $stmtPO->execute();
                         $po = $stmtPO->fetch(PDO::FETCH_ASSOC);
-
-                        echo "
-                            <td>{$po['fname']} {$po['lname']}</td>
-                        </tr>";
+                        
+                        if ($project['productOwner'] === NULL) {
+                            echo "<td>-</td>
+                            </tr>";
+                        }else{
+                            echo "
+                                <td>{$po['fname']} {$po['lname']}</td>
+                            </tr>";
+                        }
                     }
                     echo "</div>";
                 }
