@@ -371,6 +371,10 @@ include "../SQL/connect.php";
         }
 
         td a:nth-child(2) {
+            color: #5476E4;
+        }
+
+        td a:nth-child(3) {
             color: #E33535;
         }
 
@@ -488,7 +492,7 @@ include "../SQL/connect.php";
 
     <main>
         <?php
-        if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && $user['role'] === 3) {
             $userID = $_POST['userID'];
             $newRole = $_POST['newRole'];
             $stmt = $conn->prepare("UPDATE users SET role = :newRole WHERE id = :userID");
@@ -498,6 +502,36 @@ include "../SQL/connect.php";
             header('Location: dashboard.php?success=true');
             exit();
         }
+        if (isset($_POST['setSM'])) {
+            $teamId = $_POST['teamId'];
+            $newSM = $_POST['newSM'];
+            $stmt3 = $conn->prepare("UPDATE teams SET scrumMaster = :newSM WHERE id = :teamId");
+            $stmt3->bindParam(':teamId', $teamId, PDO::PARAM_INT);
+            $stmt3->bindParam(':newSM', $newSM, PDO::PARAM_INT);
+            $stmt3->execute();
+            header('Location: dashboard.php');
+            exit();
+        }
+        if (isset($_POST['setTeam'])) {
+            $name = $_POST['name'];
+            $description = $_POST['description'];
+            $projectId = $_POST['newP'];
+            $scrumMaster = $_POST['scrumMaster'];
+
+            $query = "INSERT INTO teams (name, description, projectId, scrumMaster) 
+            VALUES (:name, :description, :projectId, :scrumMaster)";
+
+            $stmt = $conn->prepare($query);
+            $stmt->bindParam(':name', $name);
+            $stmt->bindParam(':description', $description);
+            $stmt->bindParam(':projectId', $projectId);
+            $stmt->bindParam(':scrumMaster', $scrumMaster);
+
+            $stmt->execute();
+            header('Location: dashboard.php');
+            exit();
+        }
+
         ?>
         <div class="hero">
             <?php
@@ -592,7 +626,43 @@ include "../SQL/connect.php";
                         </tr>";
                 }
             } else if ($user['role'] === 2) {
-                echo '<a href="#"><i class="fa-solid fa-plus"></i>Create Team</a>';
+                echo '<div class="add">
+                    <h4 class=sub-title>All Teams : </h4>
+                    <a onclick="openTeamPopup(' . $user['id'] . ')">+ New Team</a>
+                </div>';
+
+                $query = "SELECT * from teams WHERE scrumMaster = :id";
+                $stmt = $conn->prepare($query);
+                $stmt->bindParam(':id', $user['id'], PDO::PARAM_STR);
+                $stmt->execute();
+                $teams = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                echo "<div class=fullPage><table class='teamTable'>
+                        <tr>
+                            <th>Team Name</th>
+                            <th>Created At</th>
+                            <th>Description</th>
+                            <th>Project Name</th>
+                            <th>Actions</th>
+                        </tr>";
+                foreach ($teams as $team) {
+                    $queryProject = "SELECT * FROM projects WHERE id = :projectId";
+                    $stmtProject = $conn->prepare($queryProject);
+                    $stmtProject->bindParam(':projectId', $team['projectId'], PDO::PARAM_INT);
+                    $stmtProject->execute();
+                    $project = $stmtProject->fetch(PDO::FETCH_ASSOC);
+
+                    echo "
+                        <tr>
+                            <td>{$team['name']}</td>
+                            <td>{$team['created_at']}</td>
+                            <td>{$team['description']}</td>";
+                    if ($team['projectId'] === NULL) {
+                        echo "<td>-</td>";
+                    } else {
+                        echo "<td>{$project['name']}</td>";
+                    }
+                    echo "<td class='actions'><a href='./modifyTeam.php?modifyOne=" . $team['id'] . "'>Modify</a> <a href='./MEMBERS.php?teamId=" . $team['id'] . "'>Members</a> <a href='./deleteTeam.php?deleteOne=" . $team['id'] . "'>Delete</a></td>";
+                }
             } else {
 
                 $query = "SELECT users.*, team_user.team_id AS teamId, teams.name AS team_name, teams.description AS team_description FROM users JOIN team_user ON users.id = team_user.user_id JOIN teams ON team_user.team_id = teams.id WHERE users.email = :email";
@@ -712,7 +782,7 @@ include "../SQL/connect.php";
                 <div class="popup-body">
                     <form action="" method="post">
                         <label for="userID">User ID:</label>
-                        <input type="text" id="userID" name="userID" id="userId" required>
+                        <input type="text" id="userID" name="userID" id="userId" required readonly>
                         <label for="newRole">New Role:</label>
                         <select name="newRole" id="newRole" required>
                             <option value="0">Member</option>
@@ -733,11 +803,11 @@ include "../SQL/connect.php";
                     <span class="close" onclick="closeSMPopup()">&times;</span>
                 </div>
                 <div class="popup-body">
-                    <form action="" method="post">
-                        <label for="teamId">Team ID:</label>
-                        <input type="text" id="teamId" name="teamId" required> <br>
-                        <label for="newSM">New Scrum Master:</label>
-                        <select name="newSM" id="newSM" required>
+                    <form action="dashboard.php" method="post">
+                        <label for="teamId" style="color: #008fd4; font-size: 16px; font-weight: 600;">Team ID:</label><br>
+                        <input type="number" id="teamId" name="teamId" required readonly style="width: 100%; padding: 10px 7px; font-size: 16px; border-radius: 5px; outline: none; border: #1e1e1e4c 1px solid; margin-bottom: 15px;"> <br>
+                        <label for="newSM" style="color: #008fd4; font-size: 16px; font-weight: 600;">New Scrum Master:</label><br>
+                        <select name="newSM" id="newSM" required style="width: 100%; padding: 10px 7px; font-size: 16px; border-radius: 5px; outline: none; border: #1e1e1e4c 1px solid; margin-bottom: 15px;">
                             <option value="" hidden>Select Scrum Master</option>
                             <?php
                             $query = "SELECT * FROM users WHERE role = 2";
@@ -756,18 +826,42 @@ include "../SQL/connect.php";
                     </form>
                 </div>
             </div>
-            <?php
-            if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-                    $teamId = $_POST['teamId'];
-                    $newSM = $_POST['newSM'];
-                    $stmt = $conn->prepare("UPDATE teams SET scrumMaster = :newSM WHERE id = :teamId");
-                    $stmt->bindParam(':newSM', $newSM, PDO::PARAM_INT);
-                    $stmt->bindParam(':teamId', $teamId, PDO::PARAM_INT);
-                    $stmt->execute();
-                    header('Location: dashboard.php?success=true');
-                    exit();
-                }
-            ?>
+        </div>
+        <div id="teamPopup" class="popup">
+            <div class="popup-content">
+                <div class="popup-header">
+                    <h2>Add Team</h2>
+                    <span class="close" onclick="closeTeamPopup()">&times;</span>
+                </div>
+                <div class="popup-body">
+                    <form action="dashboard.php" method="post">
+                        <label for="name" style="color: #008fd4; font-size: 16px; font-weight: 600;">Team Name:</label><br>
+                        <input type="text" id="name" name="name" required placeholder="Enter Team Name" style="width: 100%; padding: 10px 7px; font-size: 16px; border-radius: 5px; outline: none; border: #1e1e1e4c 1px solid; margin-bottom: 15px;"> <br>
+                        <label for="description" style="color: #008fd4; font-size: 16px; font-weight: 600;">Team Description:</label><br>
+                        <textarea id="description" name="description" required placeholder="Tell us about your team <3" style="width: 100%; padding: 10px 7px; font-size: 16px; border-radius: 5px; outline: none; border: #1e1e1e4c 1px solid; margin-bottom: 15px;"></textarea> <br>
+                        <label for="newP" style="color: #008fd4; font-size: 16px; font-weight: 600;">Project:</label><br>
+                        <select name="newP" id="newP" required style="width: 100%; padding: 10px 7px; font-size: 16px; border-radius: 5px; outline: none; border: #1e1e1e4c 1px solid; margin-bottom: 15px;">
+                            <option value="" hidden>Select Project</option>
+                            <?php
+                            $query = "SELECT * FROM projects WHERE NOT EXISTS ( SELECT * FROM teams WHERE teams.projectId = projects.id)";
+                            $stmt = $conn->prepare($query);
+                            $stmt->execute();
+
+                            $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            foreach ($projects as $proj) {
+                                echo "<option value={$proj['id']}>{$proj['name']}</option>";
+                            }
+                            ?>
+                        </select>
+                        <label for="scrumMaster" style="color: #008fd4; font-size: 16px; font-weight: 600;">Scrum Master:</label><br>
+                        <input type="number" id="scrumMaster" name="scrumMaster" required style="width: 100%; padding: 10px 7px; font-size: 16px; border-radius: 5px; outline: none; border: #1e1e1e4c 1px solid; margin-bottom: 15px;" readonly> <br>
+
+                        <div class="popup-footer">
+                            <button type="submit" class="btn btn-primary" name="setTeam">Submit</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -787,6 +881,15 @@ include "../SQL/connect.php";
 
         function closeMyPopup() {
             document.getElementById('myPopup').style.display = 'none';
+        }
+
+        function openTeamPopup(userID) {
+            document.getElementById('scrumMaster').value = userID;
+            document.getElementById('teamPopup').style.display = 'flex';
+        }
+
+        function closeTeamPopup() {
+            document.getElementById('teamPopup').style.display = 'none';
         }
 
         function openSMPopup(teamId) {
