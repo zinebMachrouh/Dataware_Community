@@ -12,416 +12,7 @@ include "../SQL/connect.php";
     <title>Dashboard</title>
     <link rel="shortcut icon" href="../public/brand.png" type="image/x-icon">
     <script src="https://kit.fontawesome.com/6e1faf1eda.js" crossorigin="anonymous"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins';
-        }
-
-        header {
-            width: 100%;
-            height: 9vh;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0px 50px;
-            position: fixed;
-            top: 0;
-            background-color: #fafafa;
-            z-index: 2;
-            box-shadow: #0000002e 5px 0px 10px 0px;
-        }
-
-        header h2 {
-            display: flex;
-            align-items: center;
-            color: #1e1e1e;
-            font-size: 30px;
-
-        }
-
-        header nav {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-        }
-
-        header nav a {
-            color: #008fd4;
-            text-decoration: none;
-            border-bottom: 2px #fafafa solid;
-            padding: 7px 15px;
-            /* border-radius: 10px; */
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-radius: 10px 10px 0px 0px;
-        }
-
-        header nav a:hover {
-            border-bottom: 2px #008fd4 solid;
-            background-color: #def3ff;
-            transition: all ease-in-out .5s;
-        }
-
-        main {
-            margin-top: 9vh;
-            background: url(../public/bg.png) no-repeat;
-            background-position: center;
-            background-size: cover;
-            height: fit-content;
-            width: 100%;
-            padding: 20px 50px;
-        }
-
-        div.cards {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            align-items: center;
-            background-color: #fafafa;
-            padding: 0px;
-            gap: 90px;
-            background-color: transparent;
-        }
-
-        .title {
-            color: #fafafa;
-            font-size: 28px;
-        }
-
-        .sub-title {
-            color: #def3ff;
-            font-size: 24px;
-            margin-bottom: 15px;
-            margin-top: 25px;
-
-        }
-
-        .card {
-            background-color: #fafafa;
-            width: 370px;
-            /* height: 370px; */
-            border-radius: 10px;
-            box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .card-top {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            padding: 15px 15px 5px;
-        }
-
-        .card-top h4 {
-            background-color: #008fd4;
-            font-size: 30px;
-            width: 65px;
-            height: 65px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 200px;
-            letter-spacing: 1px;
-            color: #fafafa;
-        }
-
-        .card-top h2 {
-            font-size: 28px;
-        }
-
-        .card-body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 15px 5px;
-
-        }
-
-        .card-body p {
-            font-size: 18px;
-        }
-
-        .card-body p:nth-child(2) {
-            color: #308BE6;
-        }
-
-        .card-btm {
-            display: flex;
-            align-items: center;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .card-btm a:nth-child(1) {
-            text-align: center;
-            color: #8d99ae;
-            width: 100%;
-            text-decoration: none;
-            font-size: 16px;
-        }
-
-        .card-btm a:nth-child(2) {
-            background-color: #00a6e83f;
-            padding: 15px 15px;
-            text-align: center;
-            font-weight: 600;
-            color: #308BE6;
-            width: 100%;
-            text-decoration: none;
-            transition: all ease 3s;
-            font-size: 20px;
-            margin-top: 20px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            justify-content: center;
-            padding-left: 45px;
-        }
-
-        .card-btm a:nth-child(2) i {
-            color: rgba(48, 139, 230, 0.7);
-            opacity: 0;
-        }
-
-        .card-btm a:nth-child(2):hover {
-            padding-left: 0px;
-            transition: all ease-in-out .5s;
-        }
-
-        .card-btm a:nth-child(2):hover i {
-            opacity: 1;
-            transition: all ease-in-out .5s;
-
-        }
-
-        .popup {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            display: none;
-        }
-
-        .popup-content {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            width: 400px;
-        }
-
-        .close {
-            cursor: pointer;
-            font-size: 18px;
-        }
-
-        .popup-header {
-            background: #008fd4;
-            color: #fff;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .popup-body {
-            padding: 20px;
-        }
-
-        .popup-body form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .popup-body form input,
-        .popup-body form select {
-            width: 100%;
-            padding: 10px 7px;
-            font-size: 16px;
-            border-radius: 5px;
-            outline: none;
-            border: #1e1e1e4c 1px solid;
-            margin-bottom: 15px;
-        }
-
-        .popup-body form label {
-            color: #008fd4;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .popup-footer {
-            text-align: right;
-            padding: 10px 0px;
-            background: #f8f9fa;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            justify-content: flex-end;
-        }
-
-        .popup-footer button {
-            background-color: #008fd4;
-            color: #fafafa;
-            padding: 7px 10px;
-            border: none;
-            outline: none;
-            font-size: 16px;
-            border-radius: 7px;
-        }
-
-
-        .pro {
-            margin-top: 30px;
-        }
-
-        .popup-body p {
-            margin: 5px 0px;
-        }
-
-        .popup-footer a {
-            background-color: #008fd4;
-            color: #fafafa;
-            padding: 7px 10px;
-            border: none;
-            outline: none;
-            font-size: 16px;
-            border-radius: 7px;
-            text-decoration: none;
-        }
-
-        .delete {
-            background-color: #E33535 !important;
-        }
-
-        .fullPage {
-            height: 79.8vh;
-            overflow: hidden;
-        }
-
-        .fullPage h4 {
-            color: #def3ff;
-
-        }
-
-        .side {
-            height: 160px;
-            width: 10px;
-            background-color: #008fd4;
-            border-radius: 15px;
-            margin-right: 10px;
-        }
-
-        .team {
-            padding: 10px;
-            display: flex;
-            background-color: #fafafa;
-            border-radius: 10px;
-            height: fit-content;
-            width: 300px;
-        }
-
-        .card-main h4 {
-            margin-bottom: 15px;
-        }
-
-        .teamTable {
-            background-color: #fafafa;
-            border: 2px solid #008fd4;
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        th,
-        td {
-            border-bottom: 2px solid #008fd4;
-            padding: 15px;
-            text-align: left;
-            width: 200px;
-            color: #1e1e1e;
-        }
-
-        th {
-            background-color: #def3ff;
-        }
-
-        td a {
-            text-decoration: none;
-            margin-right: 20px;
-            transition: all ease-in-out .3s;
-        }
-
-        td a:nth-child(1) {
-            color: #008fd4;
-        }
-
-        td a:nth-child(2) {
-            color: #5476E4;
-        }
-
-        td a:nth-child(3) {
-            color: #E33535;
-        }
-
-        td p {
-            padding: 7px 10px;
-            font-weight: 600;
-            width: 100px;
-            text-align: center;
-            border-radius: 25px;
-        }
-
-        .done {
-            background-color: #3ebf9d68;
-            color: #3ebf9d;
-        }
-
-        .active {
-            background-color: #00a6e83f;
-            color: #008fd4;
-
-        }
-
-        .add {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .add a {
-            padding: 10px 15px;
-            background: rgba(222, 243, 255, 0.31);
-            border-radius: 10px;
-            box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-            backdrop-filter: blur(9.2px);
-            color: #def3ff;
-            font-weight: 500;
-            letter-spacing: 1px;
-            text-decoration: none;
-            transition: all ease-in-out .3s;
-            -webkit-backdrop-filter: blur(9.2px);
-        }
-
-        .add a:hover {
-            transform: scale(1.1);
-            color: #fff;
-        }
-    </style>
+    <link rel="stylesheet" href="../public/style1.css" type="text/css">
 </head>
 
 <body>
@@ -454,6 +45,9 @@ include "../SQL/connect.php";
             ?>
             <a href="./community.php"><i class="fa-solid fa-comments"></i> Community</a>
             <a href="#" onclick="openMyPopup()"><i class="fa-solid fa-user"></i> Profile</a>
+            <a href="./community.php"><svg xmlns="http://www.w3.org/2000/svg" height="16" width="20" viewBox="0 0 640 512">
+                    <path fill="#008fd4" d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2 0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.3-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9l0 0 0 0-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z" />
+                </svg>Community</a>
             <a href="./logout.php"><i class="fa-solid fa-arrow-right-from-bracket"></i> LogOut</a>
         </nav>
     </header>
@@ -748,6 +342,7 @@ include "../SQL/connect.php";
                         <th>Description</th>
                         <th>Status</th>
                         <th>Product Owner</th>
+                        <th>Add a question</th>
                     </tr>";
                     $query = "SELECT projects.*
                         FROM users
@@ -776,6 +371,19 @@ include "../SQL/connect.php";
                         $stmtPO->execute();
                         $po = $stmtPO->fetch(PDO::FETCH_ASSOC);
 
+                        echo "
+                            <td>{$po['fname']} {$po['lname']}</td>
+                            <td>";
+                        echo ('
+                            <a>
+                                <svg class="flex justify-center" xmlns="http://www.w3.org/2000/svg" height="28" width="28" viewBox="0 0 448 512">
+                                    <path fill="#000000" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z" />
+                                </svg>
+                            </a>');
+                        echo " 
+                        </td>
+                            
+                        </tr>";
                         if ($project['productOwner'] === NULL) {
                             echo "<td>-</td>
                             </tr>";
@@ -881,6 +489,7 @@ include "../SQL/connect.php";
             </div>
         </div>
     </main>
+
 
     <script>
         function openPopup(userID) {
