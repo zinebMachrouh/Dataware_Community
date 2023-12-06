@@ -3,60 +3,69 @@ include '../SQL/connect.php';
 ?>
 <?php
 
-$errormessage = "";
+                    $errormessage = "";
 
+                    if (isset($_POST['addquestion'])) {
+                        $user_id = $_GET["user_id"];
+                        $project_id = $_GET["project_id"];
+                        echo "$user_id";
+                        // echo "$project_id";
+                        $title = $_POST["title"];
+                        $content = $_POST["content"];
+                        $tags = $_POST["tags"];
 
-if (isset($_POST['addquestion'])) {
-    $user_id = $_POST["user_id"];
-    $project_id = $_POST["project_id"];
+                        // Insert question
+                        $sql_question = "INSERT INTO questions (title, content, user_id, project_id) VALUES (:title, :content, :user_id, :project_id)";
+                        $sth_question = $conn->prepare($sql_question);
+                        $sth_question->execute(['title' => $title, 'content' => $content, 'user_id' => $user_id, 'project_id' => $project_id]);
 
-    $title = $_POST["title"];
-    $content = $_POST["content"];
-    $tags = $_POST["tags"];
+                        if ($sth_question) {
+                            $question_id = $conn->lastInsertId();
 
-    $sql = "INSERT INTO questions (user_id,title, content,project_id) VALUES (:user_id,:title,:content,:project_id)";
-    $sth = $conn->prepare($sql);
-    $sth->execute(['user_id' => $user_id, 'title' => $title, 'content' => $content, 'project_id' => $project_id]);
+                            $tagsArray = explode(",", $tags);
+                            array_walk($tagsArray, 'trim_value');
 
-    if ($sth) {
-        $question_id = $conn->lastInsertId();
+                            foreach ($tagsArray as $tag) {
+                                // Insert tag
+                                $sql_tag = "INSERT INTO tags (name, user_id) VALUES (:name, :user_id)";
+                                $sth_tag = $conn->prepare($sql_tag);
+                                $sth_tag->execute(['name' => $tag, 'user_id' => $user_id]);
 
-        $tagsArray = explode(",", $tags);
+                                // hna kan kanjib last inserted tag_id
+                                $tag_id = $conn->lastInsertId();
 
+                                // Insert into the pivot li howa tag_question table
+                                $sql_pivot = "INSERT INTO tag_question (question_id, tag_id) VALUES (:question_id, :tag_id)";
+                                $sth_pivot = $conn->prepare($sql_pivot);
+                                $sth_pivot->execute(['question_id' => $question_id, 'tag_id' => $tag_id]);
+                            }
 
-        array_walk($tagsArray, 'trim_value');
+                            $errormessage = "Question Added Successfully!";
+                        } else {
+                            $errormessage = "Error.";
+                        }
+                    }
 
+                    function trim_value(&$tag)
+                    {
+                        $tag = trim($tag);
+                    }
 
-        foreach ($tagsArray as $tag) {
-
-            $sql_tag = "INSERT INTO tags (name,user_id) VALUES (:name,:user_id)";
-            $sth_tag = $conn->prepare($sql_tag);
-            $sth_tag->execute(['name' => $tag, 'user_id' => $user_id]);
-            $sql_pivot = "INSERT INTO tag_question (question_id, tag_id) VALUES (:question_id, lastinsertid())";
-            $sth_pivot = $conn->prepare($sql_pivot);
-            $sth_pivot->execute(['question_id' => $question_id]);
-        }
-
-        $errormessage = "Question Added Successfully!";
-    } else {
-        $errormessage = "Error.";
-    }
-}
-
-function trim_value(&$tag)
-{
-    $tag = trim($tag);
-}
-
+// pour afficher les tags li kynin f bd:
+$tags = "SELECT DISTINCT name FROM tags ";
+$stmt = $conn->prepare($tags);
+$stmt->execute();
+$tags_name = $stmt->fetchAll();
+// print_r($tags_name);
 ?>
-
 <!DOCTYPE html>
 <html>
 
 <head>
     <meta charset='utf-8'>
     <meta http-equiv='X-UA-Compatible' content='IE=edge'>
-    <title>DataWare Website</title>
+    <title>Add question</title>
+    <link rel="shortcut icon" href="../public/brand.png" type="image/x-icon">
     <meta name="title" content="Team and project management for DataWare">
     <meta name="keywords" content="team, project, Members, team management, project management">
     <meta name='viewport' content='width=device-width, initial-scale=1'>
@@ -70,7 +79,6 @@ function trim_value(&$tag)
 
 
     <!-- js -->
-    <script src="js/navbar.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -123,7 +131,7 @@ function trim_value(&$tag)
         <div class="create-form">
             <h2>Data<img src="../public/brand.png" alt=brand />are</h2>
             <form action="" method="post" class="my-10 mx-10">
-               
+
                 <div class="my-6">
 
                     <div class="w-full ">
@@ -142,29 +150,37 @@ function trim_value(&$tag)
                 <div class="my-2">
                     <label for="tags" class="text-lg font-bold text-dark">Tags:</label>
                 </div>
-                <div class="flex items-center justify-around my-4">
-                    <input type="checkbox" name="" value="">
-                    <label for=""></label>
-                    <input type="checkbox" id="" name="" value="">
-                    <label for=""></label>
-                    <input type="checkbox" id="" name="" value="">
-                    <label for=""></label>
-                    <input type="checkbox" name="" value="">
-                    <label for=""></label>
-                    <input type="checkbox" id="" name="" value="">
-                    <label for=""></label>
-                    <input type="checkbox" id="" name="" value="">
-                    <label for=""></label>
-                </div>
-                <input type="text" id="tags" name="tags" placeholder="Tag1, Tag2, Tag3" required class="border border-2 border-blutext w-full px-4 rounded-lg py-2 mt-2">
-                <div class="w-full my-4">
+                <div class="flex gap-8 my-4">
+                    <?php if (count($tags_name) > 0) {
+                        foreach ($tags_name as $tag_name) { ?>
+                            <div>
+                                <input type="checkbox" name="" value="$tag_name['id']">
+                                <label for="" class="text-lg text-dark"><?php echo $tag_name['name'] ?></label>
+                            </div>
 
 
-                    <input type="submit" value="Submit Question" name="addquestion" class="text-white-color bg-blutext  px-2 py-2 rounded-lg w-full text-lg">
+
+                        <?php } ?>
+                    <?php } ?>
                 </div>
-            </form>
+                <div>
+                    <button class="addMoreTags text-blutext border-b border-1 border-blutext">Add more tags</button>
+                </div>
+
+                <div>
+                    <input type="text" id="tags" name="tags" placeholder="Tag1, Tag2, Tag3" required class="hidden border border-2 border-blutext w-full px-4 rounded-lg py-2 mt-2">
+                </div>
         </div>
-
+        <div class="w-full my-4 px-8">
+            <input type="submit" value="Submit Question" name="addquestion" class="text-white-color bg-blutext  px-2 py-2 rounded-lg w-full text-lg">
+        </div>
+        </form>
+    </div>
+    <script>
+        document.querySelector(".addMoreTags").addEventListener("click", () => {
+            document.querySelector("#tags").classList.toggle("hidden")
+        })
+    </script>
 </body>
 
 </html>
