@@ -29,7 +29,7 @@ include "../SQL/connect.php";
                         'blue-color': '#5476E4',
                         'blue-primary': '#308BE6',
                         'blutext': '#00A8E8',
-                        'question': #008fd4,
+                        'question': '#008fd4',
                         'black-color': '# 1E1 E1E ',
                     },
 

@@ -1,55 +1,55 @@
 <?php
+ob_start();
 include '../SQL/connect.php';
-?>
-<?php
 
-                    $errormessage = "";
+$errormessage = "";
 
-                    if (isset($_POST['addquestion'])) {
-                        $user_id = $_GET["user_id"];
-                        $project_id = $_GET["project_id"];
-                        echo "$user_id";
-                        // echo "$project_id";
-                        $title = $_POST["title"];
-                        $content = $_POST["content"];
-                        $tags = $_POST["tags"];
+if (isset($_POST['addquestion'])) {
+    $user_id = $_GET["user_id"];
+    $project_id = $_GET["project_id"];
+    echo "$user_id";
+    // echo "$project_id";
+    $title = $_POST["title"];
+    $content = $_POST["content"];
+    $tags = $_POST["tags"];
 
-                        // Insert question
-                        $sql_question = "INSERT INTO questions (title, content, user_id, project_id) VALUES (:title, :content, :user_id, :project_id)";
-                        $sth_question = $conn->prepare($sql_question);
-                        $sth_question->execute(['title' => $title, 'content' => $content, 'user_id' => $user_id, 'project_id' => $project_id]);
+    // Insert question
+    $sql_question = "INSERT INTO questions (title, content, user_id, project_id) VALUES (:title, :content, :user_id, :project_id)";
+    $sth_question = $conn->prepare($sql_question);
+    $sth_question->execute(['title' => $title, 'content' => $content, 'user_id' => $user_id, 'project_id' => $project_id]);
 
-                        if ($sth_question) {
-                            $question_id = $conn->lastInsertId();
+    if ($sth_question) {
+        $question_id = $conn->lastInsertId();
 
-                            $tagsArray = explode(",", $tags);
-                            array_walk($tagsArray, 'trim_value');
+        $tagsArray = explode(",", $tags);
+        array_walk($tagsArray, 'trim_value');
 
-                            foreach ($tagsArray as $tag) {
-                                // Insert tag
-                                $sql_tag = "INSERT INTO tags (name, user_id) VALUES (:name, :user_id)";
-                                $sth_tag = $conn->prepare($sql_tag);
-                                $sth_tag->execute(['name' => $tag, 'user_id' => $user_id]);
+        foreach ($tagsArray as $tag) {
+            // Insert tag
+            $sql_tag = "INSERT INTO tags (name, user_id) VALUES (:name, :user_id)";
+            $sth_tag = $conn->prepare($sql_tag);
+            $sth_tag->execute(['name' => $tag, 'user_id' => $user_id]);
 
-                                // hna kan kanjib last inserted tag_id
-                                $tag_id = $conn->lastInsertId();
+            // hna kan kanjib last inserted tag_id
+            $tag_id = $conn->lastInsertId();
 
-                                // Insert into the pivot li howa tag_question table
-                                $sql_pivot = "INSERT INTO tag_question (question_id, tag_id) VALUES (:question_id, :tag_id)";
-                                $sth_pivot = $conn->prepare($sql_pivot);
-                                $sth_pivot->execute(['question_id' => $question_id, 'tag_id' => $tag_id]);
-                            }
+            // Insert into the pivot li howa tag_question table
+            $sql_pivot = "INSERT INTO tag_question (question_id, tag_id) VALUES (:question_id, :tag_id)";
+            $sth_pivot = $conn->prepare($sql_pivot);
+            $sth_pivot->execute(['question_id' => $question_id, 'tag_id' => $tag_id]);
+        }
 
-                            $errormessage = "Question Added Successfully!";
-                        } else {
-                            $errormessage = "Error.";
-                        }
-                    }
+        $errormessage = "Question Added Successfully!";
+        header('Location: ./dashboard.php');
+    } else {
+        $errormessage = "Error.";
+    }
+}
 
-                    function trim_value(&$tag)
-                    {
-                        $tag = trim($tag);
-                    }
+function trim_value(&$tag)
+{
+    $tag = trim($tag);
+}
 
 // pour afficher les tags li kynin f bd:
 $tags = "SELECT DISTINCT name FROM tags ";
