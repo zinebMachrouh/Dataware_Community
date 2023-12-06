@@ -457,7 +457,9 @@ include "../SQL/connect.php";
             <a href="./logout.php"><i class="fa-solid fa-arrow-right-from-bracket"></i> LogOut</a>
         </nav>
     </header>
-    <main></main>
+    <main>
+        <div class="filters"></div>
+    </main>
 </body>
 
 </html>
