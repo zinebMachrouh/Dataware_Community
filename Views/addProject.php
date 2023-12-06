@@ -145,6 +145,7 @@ include '../SQL/connect.php';
             transition: all ease 0.3s;
         }
     </style>
+    
 </head>
 
 <body class="login-body">
