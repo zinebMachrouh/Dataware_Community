@@ -13,6 +13,30 @@ include "../SQL/connect.php";
     <link rel="shortcut icon" href="../public/brand.png" type="image/x-icon">
     <script src="https://kit.fontawesome.com/6e1faf1eda.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../public/style1.css" type="text/css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                fontFamily: {
+                    'Saira': ['Saira Condensed', 'sans-serif']
+
+                },
+                extend: {
+                    colors: {
+                        'dark': '#1e1b4b',
+                        'white-color': '#F6F6F6',
+                        'purp-color': '#8F51E1',
+                        'blue-color': '#5476E4',
+                        'blue-primary': '#308BE6',
+                        'blutext': '#00A8E8',
+                        'question': '#008fd4',
+                        'black-color': '# 1E1 E1E ',
+                    },
+
+                },
+            },
+        }
+    </script>
 </head>
 
 <body>
@@ -341,7 +365,7 @@ include "../SQL/connect.php";
                         <th>Description</th>
                         <th>Status</th>
                         <th>Product Owner</th>
-                        <th>Add a question</th>
+                        <th>Action</th>
                     </tr>";
                     $query = "SELECT projects.*
                         FROM users
@@ -389,7 +413,8 @@ include "../SQL/connect.php";
                             echo "
                                 <td>{$po['fname']} {$po['lname']}</td>";
                         }
-                        echo "<td><a href='#'></a></td></tr>";
+                        echo "<td><a class='active rounded-full px-2 py-2' href='addquestion.php?project_id={$project['id']}&user_id={$user['id']}'><i class='fa-solid fa-plus'></i><span class='font-semibold'>Add question</span></a></td></tr>";
+
                     }
                 }
             }
