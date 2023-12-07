@@ -136,7 +136,7 @@ include "../SQL/connect.php";
             foreach ($questions as $question) {
             ?>
                 <div class="pb-4 flex items-center my-4 rounded-lg px-3 question">
-                    <div class="flex-col">
+                    <div class="flex flex-row gap-10">
                         <div class="gap-10 ">
                             <div class="grid justify-items-center">
                                 <p>0</p>
