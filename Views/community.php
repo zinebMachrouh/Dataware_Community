@@ -122,7 +122,7 @@ include "../SQL/connect.php";
                     $email = $_SESSION['email'];
                     $query = "SELECT projects.*
                             FROM projects
-                            INNER JOIN teams ON projects.team_id = teams.id
+                            INNER JOIN teams ON projects.id = teams.projectId
                             INNER JOIN team_user ON teams.id = team_user.team_id
                             INNER JOIN users ON team_user.user_id = users.id
                             WHERE users.email = ':email';
@@ -149,7 +149,7 @@ include "../SQL/connect.php";
                 </button>
             </div>
         </div>
-        <div class="fullPage">
+        <div>
             <?php
             $query = "SELECT * from questions ORDER BY created_at ASC";
 
