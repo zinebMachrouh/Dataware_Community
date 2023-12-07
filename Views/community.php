@@ -149,7 +149,7 @@ include "../SQL/connect.php";
                 </button>
             </div>
         </div>
-        <div class="fullPage">
+        <div>
             <?php
             $query = "SELECT * from questions ORDER BY created_at ASC";
 
