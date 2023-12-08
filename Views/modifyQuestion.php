@@ -78,17 +78,16 @@ include '../SQL/connect.php';
             <form action="" method="post" class="my-10 mx-10">
                 <?php
                 $id = $_GET['modifyOne'];
-                $query = "SELECT * FROM questions WHERE id = :id";
+
+                $query = "SELECT * FROM tag_question
+                            JOIN questions q 
+                            ON tag_question.question_id = q.id 
+                            WHERE q.id = :id ";
+                var_dump($query);
                 $stmt = $conn->prepare($query);
                 $stmt->bindParam(':id', $id, PDO::PARAM_STR);
                 $stmt->execute();
-                $question = $stmt->fetch(PDO::FETCH_ASSOC);
-                
-                $query = "SELECT * FROM questions WHERE id = :id";
-                $stmt = $conn->prepare($query);
-                $stmt->bindParam(':id', $id, PDO::PARAM_STR);
-                $stmt->execute();
-                $question = $stmt->fetch(PDO::FETCH_ASSOC);
+                $question_tags = $stmt->fetch(PDO::FETCH_ASSOC);
                 
                 ?>
 
@@ -99,13 +98,13 @@ include '../SQL/connect.php';
                         <label for="title" class="text-lg font-bold text-dark">Title:</label>
                     </div>
 
-                <input type="text" id="title" name="title" value="<?php echo $question['title']?>" class="border border-2 border-blutext w-full py-2 rounded-lg pl-2 mt-2">
+                <input type="text" id="title" name="title" value="<?php echo $question_tags['title']?>" class="border border-2 border-blutext w-full py-2 rounded-lg pl-2 mt-2">
                 </div>
                 <div>
                     <label for="Content" class="text-lg font-bold text-dark">Content:</label>
                 </div>
 
-                <input type="text" id="content" name="content" value="<?php echo $question['content']?>" required class="border border-2 border-blutext w-full py-2 rounded-lg pl-2 mt-2"> 
+                <input type="text" id="content" name="content" value="<?php echo $question_tags['content']?>" required class="border border-2 border-blutext w-full py-2 rounded-lg pl-2 mt-2"> 
 
 
                 <div class="my-2">+
@@ -113,11 +112,11 @@ include '../SQL/connect.php';
                 </div>
                    
                 <div class="flex gap-8 my-4">
-                    <?php if (count($tags_name) > 0) {
-                        foreach ($tags_name as $tag_name) { ?>
+                    <?php if (count($question_tags) > 0) {
+                        foreach ($question_tags as $question_tag) { ?>
                             <div>
-                                <input type="checkbox" name="" value="$tag_name['id']">
-                                <label for="" class="text-lg text-dark" value="<?php echo $tag_name['name'] ?>"></label>
+                                <input type="checkbox" name="" value="$question_tag['id']">
+                                <label for="" class="text-lg text-dark" value="<?php echo $question_tag['name'] ?>"></label>
                             </div>
 
 
