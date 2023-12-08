@@ -82,9 +82,16 @@ include '../SQL/connect.php';
                 $stmt = $conn->prepare($query);
                 $stmt->bindParam(':id', $id, PDO::PARAM_STR);
                 $stmt->execute();
-                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+                $question = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                $query = "SELECT * FROM questions WHERE id = :id";
+                $stmt = $conn->prepare($query);
+                $stmt->bindParam(':id', $id, PDO::PARAM_STR);
+                $stmt->execute();
+                $question = $stmt->fetch(PDO::FETCH_ASSOC);
+                
+                ?>
 
-                echo '
 
                 <div class="my-6">
 
@@ -92,27 +99,25 @@ include '../SQL/connect.php';
                         <label for="title" class="text-lg font-bold text-dark">Title:</label>
                     </div>
 
-                    <input type="text" id="title" name="title" value=' . $questions['title'] . ' class="border border-2 border-blutext w-full py-2 rounded-lg pl-2 mt-2">
+                <input type="text" id="title" name="title" value="<?php echo $question['title']?>" class="border border-2 border-blutext w-full py-2 rounded-lg pl-2 mt-2">
                 </div>
                 <div>
                     <label for="Content" class="text-lg font-bold text-dark">Content:</label>
                 </div>
 
-                <input type="text" id="content" name="content" value=' . $questions['content'] . ' required class="border border-2 border-blutext w-full py-2 rounded-lg pl-2 mt-2">
+                <input type="text" id="content" name="content" value="<?php echo $question['content']?>" required class="border border-2 border-blutext w-full py-2 rounded-lg pl-2 mt-2"> 
 
 
-                <div class="my-2">
+                <div class="my-2">+
                     <label for="tags" class="text-lg font-bold text-dark">Tags:</label>
                 </div>
-                    ';
-                ?>
-
+                   
                 <div class="flex gap-8 my-4">
                     <?php if (count($tags_name) > 0) {
                         foreach ($tags_name as $tag_name) { ?>
                             <div>
                                 <input type="checkbox" name="" value="$tag_name['id']">
-                                <label for="" class="text-lg text-dark"><?php echo $tag_name['name'] ?></label>
+                                <label for="" class="text-lg text-dark" value="<?php echo $tag_name['name'] ?>"></label>
                             </div>
 
 
@@ -129,7 +134,7 @@ include '../SQL/connect.php';
                 </div>
         </div>
         <div class="w-full my-4 px-8">
-            <input type="submit" value="Submit Question" name="addquestion" class="text-white-color bg-blutext  px-2 py-2 rounded-lg w-full text-lg">
+            <input type="submit" value="Submit Question" name="modifyquestion" class="text-white-color bg-blutext  px-2 py-2 rounded-lg w-full text-lg">
         </div>
         </form>
     </div>
@@ -137,40 +142,22 @@ include '../SQL/connect.php';
 
         if (isset($_POST["modifyOne"])) {
             $title = $_POST["title"];
-            $lname = $_POST["lname"];
-            $email = $_POST["email"];
-            $birthdate = $_POST["birthdate"];
-            $tel = $_POST["tel"];
-            $adress = $_POST["adress"];
-            $service = $_POST["service"];
-            $pswd = base64_encode($_POST["pswd"]);
+            $content = $_POST["content"];
 
 
-            $stmtM = $conn->prepare("UPDATE users 
+            $stmtM = $conn->prepare("UPDATE questions 
                                     SET 
-                                        `lname` = :lname, 
-                                        `fname` = :fname, 
-                                        `birthdate` = :birthdate, 
-                                        `service` = :service, 
-                                        `adress` = :adress, 
-                                        `tel` = :tel, 
-                                        `email` = :email, 
-                                        `password` = :pswd 
+                                        `title` = :title, 
+                                        `content` = :content, 
                                     WHERE `id` = :id");
 
-            $stmtM->bindParam(':lname', $lname);
-            $stmtM->bindParam(':fname', $fname);
-            $stmtM->bindParam(':birthdate', $birthday);
-            $stmtM->bindParam(':service', $service);
-            $stmtM->bindParam(':adress', $adress);
-            $stmtM->bindParam(':tel', $tel);
-            $stmtM->bindParam(':email', $email);
-            $stmtM->bindParam(':pswd', $pswd);
+            $stmtM->bindParam(':title', $title);
+            $stmtM->bindParam(':content', $content);
             $stmtM->bindParam(':id', $id); 
 
             $stmtM->execute();
 
-        header('Location: ./dashboard.php');
+        header('Location: ./community.php');
     }
     ?>
 

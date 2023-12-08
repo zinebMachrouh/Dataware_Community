@@ -26,9 +26,11 @@ if (isset($_POST['addquestion'])) {
 
         foreach ($tagsArray as $tag) {
             // Insert tag
-            $sql_tag = "INSERT INTO tags (name, user_id) VALUES (:name, :user_id)";
-            $sth_tag = $conn->prepare($sql_tag);
-            $sth_tag->execute(['name' => $tag, 'user_id' => $user_id]);
+            if($tag!=0){
+                $sql_tag = "INSERT INTO tags (name, user_id) VALUES (:name, :user_id)";
+                $sth_tag = $conn->prepare($sql_tag);
+                $sth_tag->execute(['name' => $tag, 'user_id' => $user_id]);
+                }
 
             // hna kan kanjib last inserted tag_id
             $tag_id = $conn->lastInsertId();
