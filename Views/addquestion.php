@@ -69,6 +69,7 @@ $tags_name = $stmt->fetchAll();
     <meta name="title" content="Team and project management for DataWare">
     <meta name="keywords" content="team, project, Members, team management, project management">
     <meta name='viewport' content='width=device-width, initial-scale=1'>
+    <link rel="stylesheet" href="../public/style1.css" type="text/css">
     <!-- fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -102,28 +103,6 @@ $tags_name = $stmt->fetchAll();
             },
         }
     </script>
-    <style>
-        .login-body {
-            width: 100%;
-            height: 100vh;
-            background: url(../public/bg-login.png) no-repeat;
-            background-position: center;
-            background-size: cover;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .create-form h2 {
-            display: flex;
-            align-items: center;
-            color: #1e1e1e;
-            font-size: 30px;
-            justify-content: center;
-            padding: 20px;
-        }
-    </style>
-
 </head>
 
 <body class="login-body">
