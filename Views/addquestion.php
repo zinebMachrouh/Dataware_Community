@@ -3,60 +3,97 @@ ob_start();
 include '../SQL/connect.php';
 
 $errormessage = "";
+// pour afficher les tags li kynin f bd:
+$tags = "SELECT DISTINCT * FROM tags ";
+$stmt = $conn->prepare($tags);
+$stmt->execute();
+$tags_name = $stmt->fetchAll();
+// fonction pour tester tag wech kyna fi bd ou non
+function  valid_tags($tag_value)
+{
+    global $conn;
+    $tags = "SELECT * FROM tags where name = '$tag_value'";
+    $stmt = $conn->prepare($tags);
+    $stmt->execute();
+    return $stmt;
+}
 
 if (isset($_POST['addquestion'])) {
     $user_id = $_GET["user_id"];
     $project_id = $_GET["project_id"];
-    echo "$user_id";
-    // echo "$project_id";
+
     $title = $_POST["title"];
     $content = $_POST["content"];
     $tags = $_POST["tags"];
-
-    // Insert question
+    $tag_checkbox = $_POST["tag_checkbox"];
+    
     $sql_question = "INSERT INTO questions (title, content, user_id, project_id) VALUES (:title, :content, :user_id, :project_id)";
     $sth_question = $conn->prepare($sql_question);
-    $sth_question->execute(['title' => $title, 'content' => $content, 'user_id' => $user_id, 'project_id' => $project_id]);
+    $sth_question->bindParam(':title', $title);
+    $sth_question->bindParam('content', $content);
+    $sth_question->bindParam(':user_id', $user_id);
+    $sth_question->bindParam(':project_id', $project_id);
 
+    $sth_question->execute();
+    
     if ($sth_question) {
         $question_id = $conn->lastInsertId();
 
-        $tagsArray = explode(",", $tags);
-        array_walk($tagsArray, 'trim_value');
+        if (!empty($tags) && !isset($_POST['tag_checkbox'])) {
+           
+            $tagsArray = explode(",", $tags);
+            array_walk($tagsArray, 'trim_value');
 
-        foreach ($tagsArray as $tag) {
-            // Insert tag
-            $sql_tag = "INSERT INTO tags (name, user_id) VALUES (:name, :user_id)";
-            $sth_tag = $conn->prepare($sql_tag);
-            $sth_tag->execute(['name' => $tag, 'user_id' => $user_id]);
+            foreach ($tagsArray as $tag) {
+                $tag_v = valid_tags($tag);
+                if ($tag_v->rowCount() > 0){
 
-            // hna kan kanjib last inserted tag_id
-            $tag_id = $conn->lastInsertId();
+                $sql_tag = "INSERT INTO tags (name, user_id) VALUES (:name, :user_id)";
+                $sth_tag = $conn->prepare($sql_tag);
+                $sth_tag->execute(['name' => $tag, 'user_id' => $user_id]);
+                $tag_id = $conn->lastInsertId();
 
-            // Insert into the pivot li howa tag_question table
-            $sql_pivot = "INSERT INTO tag_question (question_id, tag_id) VALUES (:question_id, :tag_id)";
-            $sth_pivot = $conn->prepare($sql_pivot);
-            $sth_pivot->execute(['question_id' => $question_id, 'tag_id' => $tag_id]);
+                $sql_pivot = "INSERT INTO tag_question (question_id, tag_id) VALUES (:question_id, :tag_id)";
+                $sth_pivot = $conn->prepare($sql_pivot);
+                $sth_pivot->execute(['question_id' => $question_id, 'tag_id' => $tag_id]);
+            }}
+        } else if (empty($tags) && isset($_POST['tag_checkbox']) && is_array($_POST['tag_checkbox'])) {
+            $tag_checkboxs = $_POST['tag_checkbox'];
+            foreach ($tag_checkboxs as $key => $tag_name) {
+                $sql_pivot = "INSERT INTO tag_question (question_id,tag_id) VALUES (:question_id,:tag_id)";
+                $sth_pivot = $conn->prepare($sql_pivot);
+                $sth_pivot->execute(['question_id' => $question_id, 'tag_id' => $tag_name[$key]]);
+            }
+        } else if (!empty($tags) && isset($_POST['tag_checkbox']) && is_array($_POST['tag_checkbox'])) {
+                    $tagsArray = explode(",", $tags);
+                    $tag_checkboxs = $_POST['tag_checkbox'];
+                    $array_final = array_merge($tagsArray, $tag_checkboxs);
+            foreach($array_final as $value) {
+                $tag_v = valid_tags($value);
+                $id;
+                if ($tag_v->rowCount() === 0 && intval($value) === 0) {
+                    $sql_tag = "INSERT INTO tags (name, user_id) VALUES (:name, :user_id)";
+                    $sth_tag = $conn->prepare($sql_tag);
+                    $sth_tag->execute(['name' => $value, 'user_id' => $user_id]);
+                    $id = $conn->lastInsertId();
+                } else {
+                    $id = $value;
+                }
+                    $sql_pivot = "INSERT INTO tag_question (question_id, tag_id) VALUES (:question_id, :tag_id)";
+                    $sth_pivot = $conn->prepare($sql_pivot);
+                    $sth_pivot->execute(['question_id' => $question_id, 'tag_id' => $id]);
+            }
         }
 
         $errormessage = "Question Added Successfully!";
         header('Location: ./dashboard.php');
+        exit();;
     } else {
         $errormessage = "Error.";
     }
 }
 
-function trim_value(&$tag)
-{
-    $tag = trim($tag);
-}
 
-// pour afficher les tags li kynin f bd:
-$tags = "SELECT DISTINCT name FROM tags ";
-$stmt = $conn->prepare($tags);
-$stmt->execute();
-$tags_name = $stmt->fetchAll();
-// print_r($tags_name);
 ?>
 <!DOCTYPE html>
 <html>
@@ -69,7 +106,6 @@ $tags_name = $stmt->fetchAll();
     <meta name="title" content="Team and project management for DataWare">
     <meta name="keywords" content="team, project, Members, team management, project management">
     <meta name='viewport' content='width=device-width, initial-scale=1'>
-    <link rel="stylesheet" href="../public/style1.css" type="text/css">
     <!-- fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -103,13 +139,35 @@ $tags_name = $stmt->fetchAll();
             },
         }
     </script>
+    <style>
+        .login-body {
+            width: 100%;
+            height: 100vh;
+            background: url(../public/bg-login.png) no-repeat;
+            background-position: center;
+            background-size: cover;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .create-form h2 {
+            display: flex;
+            align-items: center;
+            color: #1e1e1e;
+            font-size: 30px;
+            justify-content: center;
+            padding: 20px;
+        }
+    </style>
+
 </head>
 
 <body class="login-body">
     <div class="border  m-auto mt-20  w-1/2 rounded-lg border-blutext border-4 bg-white-color">
         <div class="create-form">
             <h2>Data<img src="../public/brand.png" alt=brand />are</h2>
-            <form action="" method="post" class="my-10 mx-10">
+            <form action="" method="POST" class="my-10 mx-10">
 
                 <div class="my-6">
 
@@ -133,7 +191,7 @@ $tags_name = $stmt->fetchAll();
                     <?php if (count($tags_name) > 0) {
                         foreach ($tags_name as $tag_name) { ?>
                             <div>
-                                <input type="checkbox" name="" value="$tag_name['id']">
+                                <input type="checkbox" name="tag_checkbox[]" value="<?= $tag_name['id'] ?>">
                                 <label for="" class="text-lg text-dark"><?php echo $tag_name['name'] ?></label>
                             </div>
 
