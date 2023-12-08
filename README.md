@@ -1,6 +1,6 @@
 # Système de Gestion des Ressources Humaines DataWare
 
-Bienvenue dans le projet du Système de Gestion des Ressources Humaines (GRH) de DataWare ! Ce système a pour objectif de révolutionner la gestion du personnel pour DataWare, en fournissant une interface conviviale et des fonctionnalités robustes. Le projet implique l'utilisation des langages PHP et SQL pour les opérations côté serveur, ainsi que HTML, CSS et des frameworks CSS pour le développement côté client. Et puis développer une section communautaire similaire à 'Stack Overflow' pour favoriser l'échange et l'entraide entre les membres de l'équipe de DataWare.
+Bienvenue dans le projet du Système de Gestion des Ressources Humaines (GRH) de DataWare ! Ce système a pour objectif de révolutionner la gestion du personnel pour DataWare, en fournissant une interface conviviale et des fonctionnalités robustes. Le projet implique l'utilisation des langages de programmation PHP et des requêtes SQL pour les opérations côté serveur, ainsi que HTML, CSS et des frameworks CSS(Tailwind) pour le développement côté client. Et puis développer une section communautaire similaire à 'Stack Overflow' pour favoriser l'échange et l'entraide entre les membres de l'équipe de DataWare.
 
 ## Aperçu du Projet
 
@@ -11,7 +11,7 @@ Votre mission, si vous choisissez de l'accepter, consiste à créer un système 
 ## Composants du Projet
 
 1. **Diagrammes UML :**
-   - Diagramme de Cas d'Utilisation : Illustre les interactions entre les utilisateurs et le système(DataWare).
+   - Diagramme de Cas d'Utilisation : Illustre les interactions entre les utilisateurs et notre système(DataWare).
    - Diagramme de Classe : Représente la structure des classes du système et leurs relations.
    - Diagramme de Séquence : Dépeint la séquence des actions dans différentes situations.
 
@@ -49,10 +49,9 @@ Votre mission, si vous choisissez de l'accepter, consiste à créer un système 
    - Garantir la robustesse et la sécurité du système.
 
 4. **Conception de l'Interface :**
-   - Utiliser HTML et CSS pour créer une interface utilisateur intuitive et visuellement attrayante.
+   - Utiliser HTML et CSS et framework(Tailwind) pour créer une interface utilisateur intuitive et visuellement attrayante.
    - Incorporer des frameworks CSS pour une expérience utilisateur améliorée.
-   - Mise en place de la pagination pour visualiser 10 questions par page, en utilisant AJAX.
-   - Utiliser les frameworks.
+   - Utiliser JS permet de mise en place de la pagination pour visualiser 10 questions par page, filtration et recherche en utilisant AJAX. et n'oublions pas JQuery.
 
 5. **Implémentation PHP :**
    - Développer du code PHP pour intégrer les fonctionnalités requises dans l'interface.
@@ -76,14 +75,22 @@ Votre mission, si vous choisissez de l'accepter, consiste à créer un système 
 
 6. **Gestion des Membres de l'Équipe :**
    - En tant que Scrum Master, j'ai besoin d'ajouter ou supprimer des membres de l'équipe pour ajuster les effectifs selon les besoins.
+     
+7. **Commit Push et Pull :**
 
-7. **Allocation des Ressources :**
-   - En tant que Scrum Master, je désire affecter des équipes à des projets spécifiques pour une répartition optimale des ressources.
-8. **procédure Stockée "AddAnswer" :**
-   - Créer une procédure stockée "AjouterReponse" prenant en compte les paramètres nécessaires pour ajouter une réponse à une question spécifique.
+    git add .   /*add all untracked files*/
+    git commit -m "Rafactore code or use your message"
+    Take update and the push changes on the origin server
 
-9. **Vue SQL "ListeQuestions" :**
-   - Créer une vue SQL "ListeQuestions" combinant les informations nécessaires pour afficher la liste des questions, y compris les détails des réponses associées et le nombre de vues.
+    git pull origin feature-branch
+    git push origin feature-branch
+   
+
+## Liens utilisable
+https://app.diagrams.net/#G16aHGiajIsh2_Y6-TbcnDYRpVtUJM_cSA
+https://zinebmac.atlassian.net/jira/software/projects/DAT/boards/5/backlog
+https://themacproject.000webhostapp.com/
+https://github.com/zinebMachrouh/brief-07
 
 
 ## Mise en Route
