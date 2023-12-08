@@ -1,62 +1,7 @@
 <?php
 ob_start();
+session_start();
 include '../SQL/connect.php';
-
-$errormessage = "";
-
-if (isset($_POST['addquestion'])) {
-    $user_id = $_GET["user_id"];
-    $project_id = $_GET["project_id"];
-    echo "$user_id";
-    // echo "$project_id";
-    $title = $_POST["title"];
-    $content = $_POST["content"];
-    $tags = $_POST["tags"];
-
-    // Insert question
-    $sql_question = "INSERT INTO questions (title, content, user_id, project_id) VALUES (:title, :content, :user_id, :project_id)";
-    $sth_question = $conn->prepare($sql_question);
-    $sth_question->execute(['title' => $title, 'content' => $content, 'user_id' => $user_id, 'project_id' => $project_id]);
-
-    if ($sth_question) {
-        $question_id = $conn->lastInsertId();
-
-        $tagsArray = explode(",", $tags);
-        array_walk($tagsArray, 'trim_value');
-
-        foreach ($tagsArray as $tag) {
-            // Insert tag
-            $sql_tag = "INSERT INTO tags (name, user_id) VALUES (:name, :user_id)";
-            $sth_tag = $conn->prepare($sql_tag);
-            $sth_tag->execute(['name' => $tag, 'user_id' => $user_id]);
-
-            // hna kan kanjib last inserted tag_id
-            $tag_id = $conn->lastInsertId();
-
-            // Insert into the pivot li howa tag_question table
-            $sql_pivot = "INSERT INTO tag_question (question_id, tag_id) VALUES (:question_id, :tag_id)";
-            $sth_pivot = $conn->prepare($sql_pivot);
-            $sth_pivot->execute(['question_id' => $question_id, 'tag_id' => $tag_id]);
-        }
-
-        $errormessage = "Question Added Successfully!";
-        header('Location: ./dashboard.php');
-    } else {
-        $errormessage = "Error.";
-    }
-}
-
-function trim_value(&$tag)
-{
-    $tag = trim($tag);
-}
-
-// pour afficher les tags li kynin f bd:
-$tags = "SELECT DISTINCT name FROM tags ";
-$stmt = $conn->prepare($tags);
-$stmt->execute();
-$tags_name = $stmt->fetchAll();
-// print_r($tags_name);
 ?>
 <!DOCTYPE html>
 <html>
@@ -131,6 +76,15 @@ $tags_name = $stmt->fetchAll();
         <div class="create-form">
             <h2>Data<img src="../public/brand.png" alt=brand />are</h2>
             <form action="" method="post" class="my-10 mx-10">
+                <?php
+                $id = $_GET['modifyOne'];
+                $query = "SELECT * FROM questions WHERE id = :id";
+                $stmt = $conn->prepare($query);
+                $stmt->bindParam(':id', $id, PDO::PARAM_STR);
+                $stmt->execute();
+                $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+                echo '
 
                 <div class="my-6">
 
@@ -138,18 +92,21 @@ $tags_name = $stmt->fetchAll();
                         <label for="title" class="text-lg font-bold text-dark">Title:</label>
                     </div>
 
-                    <input type="text" id="title" name="title" placeholder="Question title" class="border border-2 border-blutext w-full py-2 rounded-lg pl-2 mt-2">
+                    <input type="text" id="title" name="title" value=' . $questions['title'] . ' class="border border-2 border-blutext w-full py-2 rounded-lg pl-2 mt-2">
                 </div>
                 <div>
                     <label for="Content" class="text-lg font-bold text-dark">Content:</label>
                 </div>
 
-                <input type="text" id="title" name="content" placeholder="Question content" required class="border border-2 border-blutext w-full py-2 rounded-lg pl-2 mt-2">
+                <input type="text" id="content" name="content" value=' . $questions['content'] . ' required class="border border-2 border-blutext w-full py-2 rounded-lg pl-2 mt-2">
 
 
                 <div class="my-2">
                     <label for="tags" class="text-lg font-bold text-dark">Tags:</label>
                 </div>
+                    ';
+                ?>
+
                 <div class="flex gap-8 my-4">
                     <?php if (count($tags_name) > 0) {
                         foreach ($tags_name as $tag_name) { ?>
@@ -176,6 +133,47 @@ $tags_name = $stmt->fetchAll();
         </div>
         </form>
     </div>
+    <?php
+
+        if (isset($_POST["modifyOne"])) {
+            $title = $_POST["title"];
+            $lname = $_POST["lname"];
+            $email = $_POST["email"];
+            $birthdate = $_POST["birthdate"];
+            $tel = $_POST["tel"];
+            $adress = $_POST["adress"];
+            $service = $_POST["service"];
+            $pswd = base64_encode($_POST["pswd"]);
+
+
+            $stmtM = $conn->prepare("UPDATE users 
+                                    SET 
+                                        `lname` = :lname, 
+                                        `fname` = :fname, 
+                                        `birthdate` = :birthdate, 
+                                        `service` = :service, 
+                                        `adress` = :adress, 
+                                        `tel` = :tel, 
+                                        `email` = :email, 
+                                        `password` = :pswd 
+                                    WHERE `id` = :id");
+
+            $stmtM->bindParam(':lname', $lname);
+            $stmtM->bindParam(':fname', $fname);
+            $stmtM->bindParam(':birthdate', $birthday);
+            $stmtM->bindParam(':service', $service);
+            $stmtM->bindParam(':adress', $adress);
+            $stmtM->bindParam(':tel', $tel);
+            $stmtM->bindParam(':email', $email);
+            $stmtM->bindParam(':pswd', $pswd);
+            $stmtM->bindParam(':id', $id); 
+
+            $stmtM->execute();
+
+        header('Location: ./dashboard.php');
+    }
+    ?>
+
     <script>
         document.querySelector(".addMoreTags").addEventListener("click", () => {
             document.querySelector("#tags").classList.toggle("hidden")
