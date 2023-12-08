@@ -128,7 +128,7 @@ include "../SQL/connect.php";
         </div>
         <div>
             <?php
-            $query = "SELECT questions.* from questions INNER JOIN projects WHERE questions.project_id = projects.id ORDER BY created_at ASC;";
+            $query = "SELECT questions.*, projects.name as project_name from questions INNER JOIN projects WHERE questions.project_id = projects.id ORDER BY created_at ASC;";
 
             $stmt = $conn->prepare($query);
             $stmt->execute();
@@ -181,7 +181,7 @@ include "../SQL/connect.php";
                                     <h2><?php echo $question['title']; ?></h2>
                                 </div>
                                 <div class="text-xs font-light">
-                                    <h2>Project: <?php echo $question['name']; ?></h2>
+                                    <h2>Project: <?php echo $question['project_name']; ?></h2>
                                 </div>
                             </div>
                             <div class="flex items-center justify-between">
@@ -225,40 +225,12 @@ include "../SQL/connect.php";
 
     </main>
     <script>
-        function openPopup(userID) {
-            document.getElementById('userID').value = userID;
-            document.getElementById('popup').style.display = 'flex';
-        }
-
-        function closePopup() {
-            document.getElementById('popup').style.display = 'none';
-        }
-
         function openMyPopup() {
             document.getElementById('myPopup').style.display = 'flex';
         }
 
         function closeMyPopup() {
             document.getElementById('myPopup').style.display = 'none';
-        }
-
-        function openTeamPopup(userID) {
-            document.getElementById('scrumMaster').value = userID;
-            document.getElementById('teamPopup').style.display = 'flex';
-        }
-
-        function closeTeamPopup() {
-            document.getElementById('teamPopup').style.display = 'none';
-        }
-
-        function openSMPopup(teamId) {
-            document.getElementById('teamId').value = teamId;
-
-            document.getElementById('SMpopup').style.display = 'flex';
-        }
-
-        function closeSMPopup() {
-            document.getElementById('SMpopup').style.display = 'none';
         }
     </script>
 
