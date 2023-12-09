@@ -144,12 +144,14 @@ include "../SQL/connect.php";
                                 input: input
                             },
                             success: function(data) {
-                                $("#search_result").html(data);                              
+                                $("#search_result").html(data);
                                 $(".myDiv").hide();
                             }
                         });
-                    } else {               
-                        $("#default-search").css("display", "none");
+                    } else {
+                        // $("#default-search").css("display", "none");
+                        $(".myDiv").show();
+                        $("#search_result").hide();
                     }
                 });
             });

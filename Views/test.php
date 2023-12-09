@@ -16,8 +16,11 @@ include "../SQL/connect.php";?>
 
 if (isset($_POST['input'])) {
     $input = $_POST['input'];
-    // $query = "SELECT title, content  FROM questions WHERE title LIKE :inputPrefix";
-    $query = "SELECT * from questions INNER JOIN projects WHERE title LIKE :inputPrefix";
+    $query = "SELECT q.title, q.content, p.name
+    FROM questions q
+    INNER JOIN projects p ON q.project_id = p.id
+    WHERE q.title LIKE :inputPrefix";
+    // $query = "SELECT * from questions INNER JOIN projects WHERE title LIKE :inputPrefix";
 
     $stmt = $conn->prepare($query);
     $stmt->bindValue(':inputPrefix', $input . '%', PDO::PARAM_STR);
@@ -29,7 +32,7 @@ if (isset($_POST['input'])) {
             foreach ($result as $row) {
 
                 echo '
-                <div class="overflow-hidden flex flex-col my-4 rounded-lg question"  id="search_result">
+                <div class="overflow-hidden flex flex-col my-4 rounded-lg question"  >
                 <div class="flex flex-row items-center">
                 <div class="flex flex-col h-full p-4  gap-5" style="background-color: #fafafa; color:#00a8e8;">
                     <a href="#" class="grid justify-items-center">
