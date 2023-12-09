@@ -1,5 +1,5 @@
 <?php
-include "../SQL/connect.php";?>
+include "../SQL/connect.php"; ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -62,14 +62,14 @@ if (isset($_POST['input'])) {
                 <div class="flex flex-col justify-between mx-3 h-full">
                     <div>
                         <div class="pt-4 text-xl font-extrabold	">
-                            <h2>'.$row['title']. '</h2>
+                            <h2>' . $row['title'] . '</h2>
                         </div>
                         <div class="text-xs font-light">
-                            <h2>Project:' .$row['name']. '</h2>
+                            <h2>Project:' . $row['name'] . '</h2>
                         </div>
                     </div>
                     <div class="flex items-center justify-between">
-                        <h3 class="pt-4 text-lg font-light">' .$row ['content'] .'</h2>
+                        <h3 class="pt-4 text-lg font-light">' . $row['content'] . '</h2>
                     </div>
                     <div class="py-4 flex items-center gap-10 mt-2">
                         <a href="" class="flex items-center border border-gray-300 px-2 py-1 rounded-lg">
@@ -78,26 +78,24 @@ if (isset($_POST['input'])) {
                             </svg>
                             Add an answer
                         </a>';
-                        
-                       
-                        $query = "SELECT tags.name
+
+
+                $query = "SELECT tags.name
                                     FROM tags
                                     INNER JOIN tag_question ON tags.id = tag_question.tag_id
                                     WHERE tag_question.question_id = :question_id";
 
-                        $stmt = $conn->prepare($query);
-                        $stmt->bindParam(':question_id', $row['id'], PDO::PARAM_INT);
-                        $stmt->execute();
-                        $tags = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                        foreach ($tags as $tag) {
-                        
-                         echo '<p class="border border-gray-300 px-2 rounded-full">' . $tag['name'] . '</p>';
+                $stmt = $conn->prepare($query);
+                $stmt->bindParam(':question_id', $row['id'], PDO::PARAM_INT);
+                $stmt->execute();
+                $tags = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                foreach ($tags as $tag) {
 
-                        
-                        }
+                    echo '<p class="border border-gray-300 px-2 rounded-full">' . $tag['name'] . '</p>';
+                }
 
-                        
-                 echo'   </div>
+
+                echo '   </div>
                 </div>
             </div>
             </div>';
@@ -110,4 +108,5 @@ if (isset($_POST['input'])) {
     }
 }
 ?>
+
 </html>
