@@ -128,7 +128,7 @@ include "../SQL/connect.php";
             </div>
 
         </div>
-        <div class="overflow-hidden flex flex-col my-4 rounded-lg question " id="search_result">
+        <div class="overflow-hidden flex flex-col my-4 rounded-lg question search-result-container ">
 
         </div>
 
@@ -144,14 +144,18 @@ include "../SQL/connect.php";
                                 input: input
                             },
                             success: function(data) {
-                                $("#search_result").html(data);
+                                if (data.trim() === "NO DATA FOUND") {
+                                    $(".search-result-container").html("<h6 class='flex flex-col h-full p-4 gap-5' style='background-color: #fafafa; color:#00a8e8;'>NO DATA FOUND</h6>");
+                                } else {
+                                    $(".search-result-container").html(data);
+                                }
                                 $(".myDiv").hide();
+                                $(".search-result-container").show();
                             }
                         });
                     } else {
-                        // $("#default-search").css("display", "none");
                         $(".myDiv").show();
-                        $("#search_result").hide();
+                        $(".search-result-container").hide();
                     }
                 });
             });
