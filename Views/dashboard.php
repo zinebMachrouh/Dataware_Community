@@ -14,6 +14,9 @@ include "../SQL/connect.php";
     <script src="https://kit.fontawesome.com/6e1faf1eda.js" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="../public/style1.css" type="text/css">
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- jquery cdn -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="my_jquery_functions.js"></script>
     <script>
         tailwind.config = {
             theme: {
@@ -414,7 +417,6 @@ include "../SQL/connect.php";
                                 <td>{$po['fname']} {$po['lname']}</td>";
                         }
                         echo "<td><a class='active rounded-full px-2 py-2' href='addquestion.php?project_id={$project['id']}&user_id={$user['id']}'><i class='fa-solid fa-plus'></i><span class='font-semibold'>Add question</span></a></td></tr>";
-
                     }
                 }
             }
