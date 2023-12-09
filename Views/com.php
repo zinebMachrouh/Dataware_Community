@@ -1,7 +1,7 @@
 <?php
-ob_start();
-session_start();
-include "../SQL/connect.php";
+    ob_start();
+    session_start();
+    include "../SQL/connect.php";
 ?>
 
 <!DOCTYPE html>
@@ -214,30 +214,9 @@ include "../SQL/connect.php";
 
 
 
-    <?php
-        foreach ($questions as $question) {
-            // Fetch answers using prepared statement
-            $questionId = $question['id'];
-            $queryAnswers = "SELECT * FROM answers WHERE question_id = :questionId";
-            $stmtAnswers = $conn->prepare($queryAnswers);
-            $stmtAnswers->bindParam(':questionId', $questionId, PDO::PARAM_INT);
-            $stmtAnswers->execute();
-            $answers = $stmtAnswers->fetchAll(PDO::FETCH_ASSOC);
 
-            if ($answers) {
-                echo '<div class="answers-container">';
-                foreach ($answers as $answer) {
-                    echo '<div class="answer">';
-                    echo '<p>User ID: ' . $answer['user_id'] . '</p>';
-                    echo '<p>Title: ' . $answer['title'] . '</p>';
-                    echo '<p>Archive: ' . $answer['archive'] . '</p>';
-                    echo '<p>Question ID: ' . $answer['question_id'] . '</p>';
-                    echo '</div>';
-                }
-                echo '</div>';
-            }
-        }
-?>
+
+
 <div id="default-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
     <div class="relative p-4 w-full max-w-2xl max-h-full">
         <!-- Modal content -->
@@ -253,16 +232,6 @@ include "../SQL/connect.php";
                 </button>
             </div>
             <div class="p-4 md:p-5 space-y-4">
-                <!-- Display existing answers -->
-                <?php foreach ($answers as $answer) : ?>
-                    <div class="answer">
-                        <p>User ID: <?php echo $answer['user_id']; ?></p>
-                        <p>Title: <?php echo $answer['title']; ?></p>
-                        <p>Archive: <?php echo $answer['archive']; ?></p>
-                        <p>Question ID: <?php echo $answer['question_id']; ?></p>
-                    </div>
-                <?php endforeach; ?>
-
                 <!-- Add new answer form -->
                 <form action="addAnswer.php" method="POST">
                     <textarea name="contenu_answer" class="w-full p-2 border rounded-md text-base leading-relaxed text-black dark:text-gray-400 resize-none" rows="5" placeholder="Your Answer"></textarea>
@@ -280,12 +249,9 @@ include "../SQL/connect.php";
 </div>
 
 <!-- Trigger button for the modal -->
-<!-- <button type="button" data-modal-show="default-modal" data-question-id="<?php echo $question['id']; ?>" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">
-    View Answers
-</button> -->
-
-
-    
+    <a href="viewAnswer.php?question_id=<?php echo $question['id']; ?>">
+        <button type="button"  data-question-id="<?php echo $question['id']; ?>" class="text-gray-500 bg-white hover:bg-gray-100 focus:ring-4 focus:outline-none focus:ring-blue-300 rounded-lg border border-gray-200 text-sm font-medium px-5 py-2.5 hover:text-gray-900 focus:z-10 dark:bg-gray-700 dark:text-gray-300 dark:border-gray-500 dark:hover:text-white dark:hover:bg-gray-600 dark:focus:ring-gray-600">View Answers</button>
+    </a>
 
     </main>
     <script>
