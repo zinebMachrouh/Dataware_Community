@@ -103,8 +103,8 @@ if (isset($_POST['input'])) {
             </div>';
             }
         } else {
-            echo "<h6 class='flex flex-col h-full p-4  gap-5' style='background-color: #fafafa; color:#00a8e8;''>NO DATA FOUND</h6>";
-        }
+            echo "NO DATA FOUND";
+                }
     } else {
         echo 'Error executing the main query: ' . implode(" ", $stmt->errorInfo());
     }
