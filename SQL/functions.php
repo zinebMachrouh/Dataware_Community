@@ -37,29 +37,12 @@ function likeQuestion($question_id, $user_id)
         $insertStmt->bindParam(':question_id', $question_id, PDO::PARAM_INT);
         $insertStmt->execute();
     }
+    NumberlikeQuestion($question_id);
 }
 
 function dislikeQuestion($question_id)
 {
-    global $conn;
-    $user_id = $_SESSION['user_id'];
 
-    $checkStmt = $conn->prepare("SELECT * FROM reactions WHERE user_id = :user_id AND question_id = :question_id AND reaction = 0");
-    $checkStmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-    $checkStmt->bindParam(':question_id', $question_id, PDO::PARAM_INT);
-    $checkStmt->execute();
-
-    if ($checkStmt->rowCount() > 0) {
-        $updateStmt = $conn->prepare("UPDATE reactions SET reaction = NULL WHERE user_id = :user_id AND question_id = :question_id AND reaction = 0");
-        $updateStmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        $updateStmt->bindParam(':question_id', $question_id, PDO::PARAM_INT);
-        $updateStmt->execute();
-    } else {
-        $insertStmt = $conn->prepare("INSERT INTO reactions (user_id, reaction, question_id) VALUES (:user_id, 0, :question_id)");
-        $insertStmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        $insertStmt->bindParam(':question_id', $question_id, PDO::PARAM_INT);
-        $insertStmt->execute();
-    }
 }
 
 function likeAnswer($answer_id)
@@ -109,16 +92,7 @@ function dislikeAnswer($answer_id)
 function NumberlikeQuestion($question_id)
 {
     global $conn;
-    $user_id = $_SESSION['user_id'];
-    $like="SELECT COUNT(reaction) AS NumberOfLike FROM reactions where reaction=1 and question_id=$question_id";
-    $stmt = $conn->prepare($like);
-    $stmt->execute();
-}
-function NumberDislikeQuestion($question_id)
-{
-    global $conn;
-    $user_id = $_SESSION['user_id'];
-    $like = "SELECT COUNT(reaction) AS NumberOfLike FROM reactions where reaction=0 question_id=$question_id";
+    $like="SELECT COUNT(reaction) AS NumberOfLike FROM reactions where reaction=1 and question_id=$question_id group by question_id";
     $stmt = $conn->prepare($like);
     $stmt->execute();
 }
@@ -126,7 +100,7 @@ function NumberlikeAnswer($answer_id)
 {
     global $conn;
     $user_id = $_SESSION['user_id'];
-    $like = "SELECT COUNT(reaction) AS NumberOfLike FROM reactions where reaction=1 and answer_id=$answer_id";
+    $like = "SELECT COUNT(reaction) AS NumberOfLike FROM reactions where reaction=1 and answer_id=$answer_id group by answer_id";
     $stmt = $conn->prepare($like);
     $stmt->execute();
 }
@@ -134,7 +108,7 @@ function NumberDislikeAnswer($answer_id)
 {
     global $conn;
     $user_id = $_SESSION['user_id'];
-    $like = "SELECT COUNT(reaction) AS NumberOfLike FROM reactions where reaction=0 and answer_id=$answer_id ";
+    $like = "SELECT COUNT(reaction) AS NumberOfLike FROM reactions where reaction=0 and answer_id=$answer_id group by answer_id";
     $stmt = $conn->prepare($like);
     $stmt->execute();
 }

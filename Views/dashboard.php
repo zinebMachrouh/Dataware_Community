@@ -53,7 +53,7 @@ include "../SQL/connect.php";
             $stmt->execute();
 
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
-
+            $_SESSION['user_id'] = $user['id'];
             if ($user) {
                 if ($user['role'] === 0) {
                     echo '<a href="#myTeams"><i class="fa-solid fa-user-group"></i>Teams</a><a href="#myProjects"><i class="fa-solid fa-bars-progress"></i>Projects</a>';
