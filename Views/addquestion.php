@@ -104,9 +104,11 @@ if (isset($_POST['addquestion'])) {
 
         foreach ($tagsArray as $tag) {
             // Insert tag
-            $sql_tag = "INSERT INTO tags (name, user_id) VALUES (:name, :user_id)";
-            $sth_tag = $conn->prepare($sql_tag);
-            $sth_tag->execute(['name' => $tag, 'user_id' => $user_id]);
+            if ($tag != 0) {
+                $sql_tag = "INSERT INTO tags (name, user_id) VALUES (:name, :user_id)";
+                $sth_tag = $conn->prepare($sql_tag);
+                $sth_tag->execute(['name' => $tag, 'user_id' => $user_id]);
+            }
 
             // hna kan kanjib last inserted tag_id
             $tag_id = $conn->lastInsertId();
@@ -249,17 +251,18 @@ $tags_name = $stmt->fetchAll();
                 <div>
                     <input type="text" id="tags" name="tags" placeholder="Tag1, Tag2, Tag3" required class="hidden border border-2 border-blutext w-full px-4 rounded-lg py-2 mt-2">
                 </div>
+
+                <div class="w-full my-4 px-8">
+                    <input type="submit" value="Submit Question" name="addquestion" class="text-white-color bg-blutext  px-2 py-2 rounded-lg w-full text-lg">
+                </div>
+            </form>
         </div>
-        <div class="w-full my-4 px-8">
-            <input type="submit" value="Submit Question" name="addquestion" class="text-white-color bg-blutext  px-2 py-2 rounded-lg w-full text-lg">
-        </div>
-        </form>
     </div>
-    <script>
-        document.querySelector(".addMoreTags").addEventListener("click", () => {
-            document.querySelector("#tags").classList.toggle("hidden")
-        })
-    </script>
+        <script>
+            document.querySelector(".addMoreTags").addEventListener("click", () => {
+                document.querySelector("#tags").classList.toggle("hidden")
+            })
+        </script>
 </body>
 
 </html>

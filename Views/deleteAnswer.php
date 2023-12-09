@@ -11,7 +11,7 @@ $user = $stmt1->fetch(PDO::FETCH_ASSOC);
 
 
 // Assuming 'email' is a column in the 'users' table related to the 'questions' table
-$stmt = $conn->prepare("DELETE FROM questions WHERE questions.user_id = :user_id AND questions.id = :id");
+$stmt = $conn->prepare("DELETE FROM answers WHERE answers.user_id = :user_id AND answers.id = :id");
 $stmt->bindParam(':user_id', $user['id']); // Assuming you have a user session, change it accordingly
 $stmt->bindParam(':id', $id);
 $stmt->execute();
