@@ -17,7 +17,7 @@ include "../SQL/connect.php";
             $stmt->bindParam(':question_id', $question_id);
 
             $stmt->execute();
-            header('Location: ./community.php');
+            header('Location: ./communitycopy.php');
             exit();
         }
 
@@ -268,10 +268,20 @@ include "../SQL/connect.php";
                     <span class="close" onclick="closeAnswerPopup()">&times;</span>
                 </div>
                 <div class="popup-body">
-                    <form action="community.php" method="post">
-                        <input type="text" name="question_id" id="question_id" hidden>
-                        <label for="title" style="color: #008fd4; font-size: 16px; font-weight: 600;">Your answer:</label><br>
-                        <textarea type="text" id="title" rows="5" name="title" placeholder="Answer content" required style="width: 100%; padding: 10px 7px; font-size: 16px; border-radius: 5px; outline: none; border: #1e1e1e4c 1px solid; margin-bottom: 15px;"> </textarea><br>
+                    <form action="communitycopy.php" method="post">
+                        <input type="text" name="question_id" id="question_id">
+                    
+                        <?php
+                            echo "<input type='text' name='userId' value='".$_SESSION['userId']."'/>" ;
+                            echo $question['id'];
+                            // var_dump($question["id"]);
+                            // $query1 = "SELECT title FROM questions where id = :id";
+                            // $stmt = $conn->prepare($query1);
+                            // $stmt->bindParam(':id', $question['id'], PDO::PARAM_INT);
+                            // $stmt->execute();
+                        ?>
+                        <label for="title" style="color: #008fd4; font-size: 16px; font-weight: 600;">Content:</label><br>
+                        <input type="text" id="title" name="title" placeholder="Answer content" required style="width: 100%; padding: 10px 7px; font-size: 16px; border-radius: 5px; outline: none; border: #1e1e1e4c 1px solid; margin-bottom: 15px;"> <br>
                         <div class="popup-footer">
                             <button type="submit" class="btn btn-primary" name="Answer">Submit</button>
                         </div>

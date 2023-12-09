@@ -56,8 +56,8 @@ include "../SQL/connect.php";
             $stmt = $conn->prepare($query);
             $stmt->bindParam(':email', $email, PDO::PARAM_STR);
             $stmt->execute();
-
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            $_SESSION['userId'] = $user['id'];
 
             if ($user) {
                 if ($user['role'] === 0) {
