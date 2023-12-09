@@ -17,6 +17,7 @@ include "../SQL/connect.php";
     <link rel="shortcut icon" href="../public/brand.png" type="image/x-icon">
     <link rel="stylesheet" href="../public/style1.css" type="text/css">
     <script src="https://kit.fontawesome.com/6e1faf1eda.js" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <!-- fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -125,10 +126,43 @@ include "../SQL/connect.php";
                     Search
                 </button>
             </div>
+
         </div>
-        <div>
+        <div class="overflow-hidden flex flex-col my-4 rounded-lg question " id="search_result">
+
+        </div>
+
+        <script type="text/javascript">
+            $(document).ready(function() {
+                $("#default-search").keyup(function() {
+                    var input = $(this).val();
+                    if (input != "") {
+                        $.ajax({
+                            url: "test.php",
+                            method: "POST",
+                            data: {
+                                input: input
+                            },
+                            success: function(data) {
+                                $("#search_result").html(data);
+                                $(".myDiv").hide();
+                            }
+                        });
+                    } else {
+                        // $("#default-search").css("display", "none");
+                        $(".myDiv").show();
+                        $("#search_result").hide();
+                    }
+                });
+            });
+        </script>
+
+
+
+        <div class="myDiv">
             <?php
             $query = "SELECT questions.*, projects.name as project_name from questions INNER JOIN projects WHERE questions.project_id = projects.id ORDER BY created_at ASC;";
+            // $query = "SELECT * from questions INNER JOIN projects WHERE questions.project_id = projects.id ORDER BY created_at ASC;";
 
             $stmt = $conn->prepare($query);
             $stmt->execute();
@@ -217,6 +251,7 @@ include "../SQL/connect.php";
                                     Add an answer
                                 </a>
                                 <?php
+                                echo $question['id'];
                                 $query = "SELECT tags.name
                                             FROM tags
                                             INNER JOIN tag_question ON tags.id = tag_question.tag_id
@@ -243,15 +278,44 @@ include "../SQL/connect.php";
 
             ?>
         </div>
+        <!-- </div> -->
 
     </main>
     <script>
+        function openPopup(userID) {
+            document.getElementById('userID').value = userID;
+            document.getElementById('popup').style.display = 'flex';
+        }
+
+        function closePopup() {
+            document.getElementById('popup').style.display = 'none';
+        }
+
         function openMyPopup() {
             document.getElementById('myPopup').style.display = 'flex';
         }
 
         function closeMyPopup() {
             document.getElementById('myPopup').style.display = 'none';
+        }
+
+        function openTeamPopup(userID) {
+            document.getElementById('scrumMaster').value = userID;
+            document.getElementById('teamPopup').style.display = 'flex';
+        }
+
+        function closeTeamPopup() {
+            document.getElementById('teamPopup').style.display = 'none';
+        }
+
+        function openSMPopup(teamId) {
+            document.getElementById('teamId').value = teamId;
+
+            document.getElementById('SMpopup').style.display = 'flex';
+        }
+
+        function closeSMPopup() {
+            document.getElementById('SMpopup').style.display = 'none';
         }
     </script>
 

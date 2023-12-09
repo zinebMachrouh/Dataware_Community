@@ -84,6 +84,38 @@ if (isset($_POST['addquestion'])) {
                     $sth_pivot->execute(['question_id' => $question_id, 'tag_id' => $id]);
             }
         }
+    }
+    echo "$user_id";
+    // echo "$project_id";
+    $title = $_POST["title"];
+    $content = $_POST["content"];
+    $tags = $_POST["tags"];
+
+    // Insert question
+    $sql_question = "INSERT INTO questions (title, content, user_id, project_id) VALUES (:title, :content, :user_id, :project_id)";
+    $sth_question = $conn->prepare($sql_question);
+    $sth_question->execute(['title' => $title, 'content' => $content, 'user_id' => $user_id, 'project_id' => $project_id]);
+
+    if ($sth_question) {
+        $question_id = $conn->lastInsertId();
+
+        $tagsArray = explode(",", $tags);
+        array_walk($tagsArray, 'trim_value');
+
+        foreach ($tagsArray as $tag) {
+            // Insert tag
+            $sql_tag = "INSERT INTO tags (name, user_id) VALUES (:name, :user_id)";
+            $sth_tag = $conn->prepare($sql_tag);
+            $sth_tag->execute(['name' => $tag, 'user_id' => $user_id]);
+
+            // hna kan kanjib last inserted tag_id
+            $tag_id = $conn->lastInsertId();
+
+            // Insert into the pivot li howa tag_question table
+            $sql_pivot = "INSERT INTO tag_question (question_id, tag_id) VALUES (:question_id, :tag_id)";
+            $sth_pivot = $conn->prepare($sql_pivot);
+            $sth_pivot->execute(['question_id' => $question_id, 'tag_id' => $tag_id]);
+        }
 
         $errormessage = "Question Added Successfully!";
         header('Location: ./dashboard.php');
@@ -94,6 +126,17 @@ if (isset($_POST['addquestion'])) {
 }
 
 
+function trim_value(&$tag)
+{
+    $tag = trim($tag);
+}
+
+// pour afficher les tags li kynin f bd:
+$tags = "SELECT DISTINCT name FROM tags ";
+$stmt = $conn->prepare($tags);
+$stmt->execute();
+$tags_name = $stmt->fetchAll();
+// print_r($tags_name);
 ?>
 <!DOCTYPE html>
 <html>
@@ -168,7 +211,6 @@ if (isset($_POST['addquestion'])) {
         <div class="create-form">
             <h2>Data<img src="../public/brand.png" alt=brand />are</h2>
             <form action="" method="POST" class="my-10 mx-10">
-
                 <div class="my-6">
 
                     <div class="w-full ">
@@ -191,7 +233,7 @@ if (isset($_POST['addquestion'])) {
                     <?php if (count($tags_name) > 0) {
                         foreach ($tags_name as $tag_name) { ?>
                             <div>
-                                <input type="checkbox" name="tag_checkbox[]" value="<?= $tag_name['id'] ?>">
+                                <input type="checkbox" name="" value="$tag_name['id']">
                                 <label for="" class="text-lg text-dark"><?php echo $tag_name['name'] ?></label>
                             </div>
 
@@ -205,7 +247,7 @@ if (isset($_POST['addquestion'])) {
                 </div>
 
                 <div>
-                    <input type="text" id="tags" name="tags" placeholder="Tag1, Tag2, Tag3" class="hidden border border-2 border-blutext w-full px-4 rounded-lg py-2 mt-2">
+                    <input type="text" id="tags" name="tags" placeholder="Tag1, Tag2, Tag3" required class="hidden border border-2 border-blutext w-full px-4 rounded-lg py-2 mt-2">
                 </div>
         </div>
         <div class="w-full my-4 px-8">
