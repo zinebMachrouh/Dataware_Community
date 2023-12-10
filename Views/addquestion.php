@@ -26,7 +26,7 @@ if (isset($_POST['addquestion'])) {
     $content = $_POST["content"];
     $tags = $_POST["tags"];
     $tag_checkbox = $_POST["tag_checkbox"];
-    
+
     $sql_question = "INSERT INTO questions (title, content, user_id, project_id) VALUES (:title, :content, :user_id, :project_id)";
     $sth_question = $conn->prepare($sql_question);
     $sth_question->bindParam(':title', $title);
@@ -35,28 +35,29 @@ if (isset($_POST['addquestion'])) {
     $sth_question->bindParam(':project_id', $project_id);
 
     $sth_question->execute();
-    
+
     if ($sth_question) {
         $question_id = $conn->lastInsertId();
 
         if (!empty($tags) && !isset($_POST['tag_checkbox'])) {
-           
+
             $tagsArray = explode(",", $tags);
             array_walk($tagsArray, 'trim_value');
 
             foreach ($tagsArray as $tag) {
                 $tag_v = valid_tags($tag);
-                if ($tag_v->rowCount() > 0){
+                if ($tag_v->rowCount() > 0) {
 
-                $sql_tag = "INSERT INTO tags (name, user_id) VALUES (:name, :user_id)";
-                $sth_tag = $conn->prepare($sql_tag);
-                $sth_tag->execute(['name' => $tag, 'user_id' => $user_id]);
-                $tag_id = $conn->lastInsertId();
+                    $sql_tag = "INSERT INTO tags (name, user_id) VALUES (:name, :user_id)";
+                    $sth_tag = $conn->prepare($sql_tag);
+                    $sth_tag->execute(['name' => $tag, 'user_id' => $user_id]);
+                    $tag_id = $conn->lastInsertId();
 
-                $sql_pivot = "INSERT INTO tag_question (question_id, tag_id) VALUES (:question_id, :tag_id)";
-                $sth_pivot = $conn->prepare($sql_pivot);
-                $sth_pivot->execute(['question_id' => $question_id, 'tag_id' => $tag_id]);
-            }}
+                    $sql_pivot = "INSERT INTO tag_question (question_id, tag_id) VALUES (:question_id, :tag_id)";
+                    $sth_pivot = $conn->prepare($sql_pivot);
+                    $sth_pivot->execute(['question_id' => $question_id, 'tag_id' => $tag_id]);
+                }
+            }
         } else if (empty($tags) && isset($_POST['tag_checkbox']) && is_array($_POST['tag_checkbox'])) {
             $tag_checkboxs = $_POST['tag_checkbox'];
             foreach ($tag_checkboxs as $key => $tag_name) {
@@ -65,10 +66,10 @@ if (isset($_POST['addquestion'])) {
                 $sth_pivot->execute(['question_id' => $question_id, 'tag_id' => $tag_name[$key]]);
             }
         } else if (!empty($tags) && isset($_POST['tag_checkbox']) && is_array($_POST['tag_checkbox'])) {
-                    $tagsArray = explode(",", $tags);
-                    $tag_checkboxs = $_POST['tag_checkbox'];
-                    $array_final = array_merge($tagsArray, $tag_checkboxs);
-            foreach($array_final as $value) {
+            $tagsArray = explode(",", $tags);
+            $tag_checkboxs = $_POST['tag_checkbox'];
+            $array_final = array_merge($tagsArray, $tag_checkboxs);
+            foreach ($array_final as $value) {
                 $tag_v = valid_tags($value);
                 $id;
                 if ($tag_v->rowCount() === 0 && intval($value) === 0) {
@@ -79,18 +80,22 @@ if (isset($_POST['addquestion'])) {
                 } else {
                     $id = $value;
                 }
-                    $sql_pivot = "INSERT INTO tag_question (question_id, tag_id) VALUES (:question_id, :tag_id)";
-                    $sth_pivot = $conn->prepare($sql_pivot);
-                    $sth_pivot->execute(['question_id' => $question_id, 'tag_id' => $id]);
+                $sql_pivot = "INSERT INTO tag_question (question_id, tag_id) VALUES (:question_id, :tag_id)";
+                $sth_pivot = $conn->prepare($sql_pivot);
+                $sth_pivot->execute(['question_id' => $question_id, 'tag_id' => $id]);
             }
         }
 
         $errormessage = "Question Added Successfully!";
         header('Location: ./dashboard.php');
-        exit();;
+        exit();
     } else {
         $errormessage = "Error.";
     }
+}
+function trim_value(&$tag)
+{
+    $tag = trim($tag);
 }
 
 
@@ -113,7 +118,9 @@ if (isset($_POST['addquestion'])) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inika&family=Inter:wght@100&family=Ruda&display=swap" rel="stylesheet">
-
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- style -->
+    <link rel="stylesheet" href="../public/style1.css?v=<?php echo time(); ?>" type="text/css">
 
     <!-- js -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -140,30 +147,13 @@ if (isset($_POST['addquestion'])) {
         }
     </script>
     <style>
-        .login-body {
-            width: 100%;
-            height: 100vh;
-            background: url(../public/bg-login.png) no-repeat;
-            background-position: center;
-            background-size: cover;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
 
-        .create-form h2 {
-            display: flex;
-            align-items: center;
-            color: #1e1e1e;
-            font-size: 30px;
-            justify-content: center;
-            padding: 20px;
-        }
     </style>
 
 </head>
 
 <body class="login-body">
+    <a href="./dashboard.php" class="bi bi-arrow-left back"></a>
     <div class="border  m-auto mt-20  w-1/2 rounded-lg border-blutext border-4 bg-white-color">
         <div class="create-form">
             <h2>Data<img src="../public/brand.png" alt=brand />are</h2>

@@ -16,6 +16,8 @@ include "../SQL/connect.php";
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- jquery cdn -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="shortcut icon" href="../public/brand.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
     <script src="my_jquery_functions.js"></script>
     <script>
         tailwind.config = {
