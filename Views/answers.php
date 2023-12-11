@@ -118,7 +118,7 @@ include "../SQL/connect.php";
             echo '<div class="overflow-hidden flex my-4 rounded-lg question">
                     <div class="flex flex-row items-center">
                         <div class="flex flex-col h-full p-4  gap-5" style="background-color: #fafafa; color:#00a8e8;">';
-            echo "<a href='./likeAnswer.php?question_id=" . $answer['id'] . "' class='grid justify-items-center'>";
+            echo "<a href='./likeAnswer.php?answer_id=" . $answer['id'] . "' class='grid justify-items-center'>";
             $dislikeQuery = "SELECT COUNT(reaction) AS NumberOfDislikes FROM reactions WHERE reaction = 1 AND answer_id = :answer_id GROUP BY answer_id";
             $stmt1 = $conn->prepare($dislikeQuery);
             $stmt1->bindParam(':answer_id', $answer['id'], PDO::PARAM_INT);
@@ -164,14 +164,14 @@ include "../SQL/connect.php";
                 </a>
             </div>
             <div class="flex flex-col mx-3 h-full">
-                <div class="flex flex-row justify-between align-center">
-                    <h2 class="pt-4 text-xl font-extrabold	">';
+                <div class="flex flex-row justify-between items-end" style="width:100%;">
+                    <h2 class="pt-4 text-xl font-extrabold">';
             $query = "SELECT * FROM users WHERE id = :id";
             $stmt = $conn->prepare($query);
             $stmt->bindParam(':id', $answer['user_id'], PDO::PARAM_STR);
             $stmt->execute();
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            echo 'Answer By : '.$user['fname'].' '. $user['lname'].'</h2>';
+            echo 'Answer By : ' . $user['fname'] . ' ' . $user['lname'] . '</h2>';
             $checkUserStmt = $conn->prepare("SELECT user_id, solution FROM questions WHERE id = :question_id");
             $checkUserStmt->bindParam(':question_id', $_GET['question_id'], PDO::PARAM_INT);
             $checkUserStmt->execute();
@@ -182,13 +182,42 @@ include "../SQL/connect.php";
                 echo '<a href="#">Solution</a>';
             }
             echo '</div>
-            <div class="my-2"><p>'.$answer['title'].'</p></div>
+            <div class="my-2"><p>' . $answer['title'] . '</p></div>
             </div>
             </div>
         </div>';
         }
         ?>
     </main>
+    <div id="AnswerPopup" class="popup">
+        <div class="popup-content">
+            <div class="popup-header">
+                <h2 id="questionPopup"></h2>
+                <span class="close" onclick="closeAnswerPopup()">&times;</span>
+            </div>
+            <div class="popup-body">
+                <form action="community.php" method="post">
+                    <input type="text" name="question_id" id="question_id" hidden>
+                    <label for="title" style="color: #008fd4; font-size: 16px; font-weight: 600;">Your answer:</label><br>
+                    <textarea type="text" id="title" rows="5" name="title" placeholder="Answer content" required style="width: 100%; padding: 10px 7px; font-size: 16px; border-radius: 5px; outline: none; border: #1e1e1e4c 1px solid; margin-bottom: 15px;"> </textarea><br>
+                    <div class="popup-footer">
+                        <button type="submit" class="btn btn-primary" name="Answer">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <script>
+        function openAnswerPopup(question_id) {
+            document.getElementById('question_id').value = question_id;
+
+            document.getElementById('AnswerPopup').style.display = 'flex';
+        }
+
+        function closeAnswerPopup() {
+            document.getElementById('AnswerPopup').style.display = 'none';
+        }
+    </script>
 </body>
 
 </html>
