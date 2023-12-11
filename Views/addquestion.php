@@ -133,11 +133,6 @@ function trim_value(&$tag)
 }
 
 
-function trim_value(&$tag)
-{
-    $tag = trim($tag);
-}
-
 // pour afficher les tags li kynin f bd:
 $tags = "SELECT DISTINCT name FROM tags ";
 $stmt = $conn->prepare($tags);
