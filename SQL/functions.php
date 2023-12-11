@@ -86,47 +86,6 @@ function likeAnswer($answer_id)
 
 function dislikeAnswer($answer_id)
 {
-    global $conn;
-    $user_id = $_SESSION['user_id'];
-    $stmt = $conn->prepare("INSERT INTO reactions (user_id, reaction, answer_id) VALUES (:user_id, 0, :answer_id)");
-    $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-    $stmt->bindParam(':answer_id', $answer_id, PDO::PARAM_INT);
-    $stmt->execute();
-}
-//pour calculer le nombre de like and dislike:
-function NumberlikeQuestion($question_id)
-{
-    global $conn;
-    $user_id = $_SESSION['user_id'];
-    $like="SELECT COUNT(reaction) AS NumberOfLike FROM reactions where reaction=1 and question_id=$question_id";
-    $stmt = $conn->prepare($like);
-    $stmt->execute();
-}
-function NumberDislikeQuestion($question_id)
-{
-    global $conn;
-    $user_id = $_SESSION['user_id'];
-    $like = "SELECT COUNT(reaction) AS NumberOfLike FROM reactions where reaction=0 and question_id=$question_id";
-    $stmt = $conn->prepare($like);
-    $stmt->execute();
-}
-//////////////////////////
-function NumberlikeAnswer($answer_id)
-{
-    global $conn;
-    $user_id = $_SESSION['user_id'];
-    $like = "SELECT COUNT(reaction) AS NumberOfLike FROM reactions where reaction=1 and answer_id=$answer_id";
-    $stmt = $conn->prepare($like);
-    $stmt->execute();
-}
-function NumberDislikeAnswer($answer_id)
-{
-    global $conn;
-    $user_id = $_SESSION['user_id'];
-    $like = "SELECT COUNT(reaction) AS NumberOfLike FROM reactions where reaction=0 and answer_id=$answer_id ";
-    $stmt = $conn->prepare($like);
-    $stmt->execute();
-}
 global $conn;
 $user_id = $_SESSION['user_id'];
 
@@ -152,4 +111,4 @@ function updateAnswer(){
 }
 
 
-
+}
