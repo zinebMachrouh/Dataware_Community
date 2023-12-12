@@ -189,11 +189,13 @@ include "../SQL/connect.php";
                 </svg>
             </a>
             <script>
-                const iconCheckList = document.querySelectorAll(".iconCheck");
+                    const iconCheckList = document.querySelectorAll(".iconCheck");
+
                 iconCheckList.forEach((iconCheck) => {
                     iconCheck.addEventListener('click', function(event) {
                         event.preventDefault();
 
+                        // Assuming each iconCheck element has a data-answer-id attribute
                         const answerId = <?= $answer['id'] ?>;
 
                         const url = `./MarkAsSolution.php?answer_id=${answerId}`;
@@ -206,13 +208,15 @@ include "../SQL/connect.php";
                             })
                             .then(response => {
                                 console.log(response);
-                                
+                                // Handle the response as needed
                             })
                             .catch(error => {
                                 console.error('Error:', error);
                             });
                     });
                 });
+            </script>
+
             </script>
 
 
@@ -248,6 +252,8 @@ include "../SQL/connect.php";
         </div>
     </div>
     <script>
+        const iconCheck = document.querySelectorAll(".iconCheck");
+
         function openAnswerPopup(question_id) {
             document.getElementById('question_id').value = question_id;
 
@@ -257,7 +263,7 @@ include "../SQL/connect.php";
         function closeAnswerPopup() {
             document.getElementById('AnswerPopup').style.display = 'none';
         }
-        iconCheckList.forEach((iconCheck) => {
+        iconCheck.forEach((iconCheck) => {
             iconCheck.addEventListener("click", () => {
                 const isGreen = iconCheck.classList.toggle("color");
                 iconCheck.style.color = isGreen ? "green" : "";
