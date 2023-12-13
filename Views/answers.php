@@ -36,7 +36,9 @@ include "../SQL/connect.php";
     <meta name='viewport' content='width=device-width, initial-scale=1'>
     <link rel="shortcut icon" href="../public/brand.png" type="image/x-icon">
     <link rel="stylesheet" href="../public/style1.css" type="text/css">
+
     <script src="https://kit.fontawesome.com/6e1faf1eda.js" crossorigin="anonymous"></script>
+
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <!-- fonts -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -177,17 +179,58 @@ include "../SQL/connect.php";
             $checkUserStmt->execute();
 
             $questionInfo = $checkUserStmt->fetch(PDO::FETCH_ASSOC);
-
-            if ($questionInfo && $questionInfo['user_id'] == $user_id && !$questionInfo['solution']) {
-                echo '<a href="#">Solution</a>';
-            }
-            echo '</div>
-            <div class="my-2"><p>' . $answer['title'] . '</p></div>
-            </div>
-            </div>
-        </div>';
-        }
+            if ($questionInfo && $questionInfo['user_id'] == $user_id && !$questionInfo['solution']) { 
         ?>
+
+            <a href="./MarkAsSolution.php?answer_id=<?= $answer['id'] ?>" class='iconCheck ml-6'>
+                <svg xmlns='http://www.w3.org/2000/svg' width='25' height='30' fill='currentColor' class='bi bi-check-square' viewBox='0 0 16 16'>
+                    <path d='M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z' />
+                    <path d='M10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.992 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.235.235 0 0 1 .02-.022z' />
+                </svg>
+            </a>
+            <?php
+            }
+            ?>
+            <script>
+                const iconCheckList = document.querySelectorAll(".iconCheck");
+                iconCheckList.forEach((iconCheck) => {
+                    iconCheck.addEventListener('click', function(event) {
+                        event.preventDefault();
+
+                        const answerId = <?= $answer['id'] ?>;
+
+                        const url = `./MarkAsSolution.php?answer_id=${answerId}`;
+
+                        fetch(url, {
+                                method: 'GET',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                            })
+                            .then(response => {
+                                console.log(response);
+                                
+                            })
+                            .catch(error => {
+                                console.error('Error:', error);
+                            });
+                    });
+                });
+            </script>
+
+
+
+
+
+            </div>
+            <div class="my-2">
+                <p><?= $answer['title'] ?></p>
+            </div>
+            </div>
+            </div>
+            </div>
+        <?php } ?>
+
     </main>
     <div id="AnswerPopup" class="popup">
         <div class="popup-content">
@@ -217,6 +260,12 @@ include "../SQL/connect.php";
         function closeAnswerPopup() {
             document.getElementById('AnswerPopup').style.display = 'none';
         }
+        iconCheckList.forEach((iconCheck) => {
+            iconCheck.addEventListener("click", () => {
+                const isGreen = iconCheck.classList.toggle("color");
+                iconCheck.style.color = isGreen ? "green" : "";
+            });
+        });
     </script>
 </body>
 

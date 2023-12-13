@@ -93,18 +93,18 @@ if (isset($_POST['Answer'])) {
             </a>
         </nav>
     </header>
-                <?php
-            $email = $_SESSION['email'];
+    <?php
+    $email = $_SESSION['email'];
 
-            $query = "SELECT * FROM users WHERE email = :email";
-            $stmt = $conn->prepare($query);
-            $stmt->bindParam(':email', $email, PDO::PARAM_STR);
-            $stmt->execute();
-            $user = $stmt->fetch(PDO::FETCH_ASSOC);
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['userId'] = $user['id'];
+    $query = "SELECT * FROM users WHERE email = :email";
+    $stmt = $conn->prepare($query);
+    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+    $stmt->execute();
+    $user = $stmt->fetch(PDO::FETCH_ASSOC);
+    $_SESSION['user_id'] = $user['id'];
+    $_SESSION['userId'] = $user['id'];
 
-?>
+    ?>
     <div id="myPopup" class="popup">
         <div class="popup-content">
             <div class="popup-header">
@@ -147,36 +147,62 @@ if (isset($_POST['Answer'])) {
                     <option value="" hidden> Projects <i class="fa-solid fa-filter" style="color: #00a8e8;"></i></option>
                     <?php
                     $email = $_SESSION['email'];
-                    $query = "SELECT projects.*
+                    $queryProject = "SELECT projects.*
                             FROM projects
                             INNER JOIN teams ON projects.id = teams.projectId
                             INNER JOIN team_user ON teams.id = team_user.team_id
                             INNER JOIN users ON team_user.user_id = users.id
-                            WHERE users.email = ':email';
-                        ";
-                    $stmt = $conn->prepare($query);
+                            WHERE users.email = :email";
+                    $stmtProject = $conn->prepare($queryProject);
+                    $stmtProject->bindParam(':email', $email, PDO::PARAM_STR);
+                    $stmtProject->execute();
+                    $projects = $stmtProject->fetchAll(PDO::FETCH_ASSOC);
+
+                    foreach ($projects as $project) {
+                        echo "<option value='" . $project['id'] . "'>" . $project['name'] . "</option>";
+                    }
+
                     ?>
                 </select>
-                <a href="" class="flex flex-row border justify-center items-center border-gray-300 px-2 py-1 rounded-lg" style="width: 150px;">
-                    Tags
-                    <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512">
-                        <path fill="#ffffff" d="M3.9 54.9C10.5 40.9 24.5 32 40 32H472c15.5 0 29.5 8.9 36.1 22.9s4.6 30.5-5.2 42.5L320 320.9V448c0 12.1-6.8 23.2-17.7 28.6s-23.8 4.3-33.5-3l-64-48c-8.1-6-12.8-15.5-12.8-25.6V320.9L9 97.3C-.7 85.4-2.8 68.8 3.9 54.9z" />
-                    </svg>
-                </a>
+
             </div>
-            <div class="flex-1 relative">
+            <div class="flex-1 relative ml-3">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
                     <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                         <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 19-4-4m0-7A7 7 0 1 1 1 8a7 7 0 0 1 14 0Z" />
                     </svg>
                 </div>
-                <input type="search" id="default-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg dark:border-gray-600 dark:placeholder-gray-400   dark:focus:border-blue-500" placeholder="Search title..." required />
+                <input type="search" id="default-search" class="block w-full p-4 ps-10 text-sm text-gray-900 border border-gray-300 rounded-lg dark:border-gray-600 dark:placeholder-gray-400   dark:focus:border-blue-500" placeholder="Search By Title Or Tag..." required />
                 <button type="submit" class=" absolute end-2.5 bottom-2.5 bg-blue-700  focus:ring-4  focus:ring-blue-300  rounded-lg text-sm px-4 py-2 dark:bg-blue-600 dark:focus:ring-blue-800 bg-blue-primary">
                     Search
                 </button>
             </div>
 
         </div>
+        <script type="text/javascript">
+            $(document).ready(function() {
+                showdata(1);
+            });
+
+            function showdata(page) {
+                $.ajax({
+                    url: 'pagination.php',
+                    method: 'post',
+                    data: {
+                        page_no: page
+                    },
+                    success: function(result) {
+                        $("#result").html(result);
+                    }
+                });
+            }
+
+            $(document).on("click", ".pagination a", function(e) {
+                e.preventDefault();
+                var page = $(this).data('page');
+                showdata(page);
+            });
+        </script>
 
         <!-- display the search result -->
         <div class="overflow-hidden flex flex-col my-4 rounded-lg question search-result-container ">
@@ -196,7 +222,7 @@ if (isset($_POST['Answer'])) {
     </main>
     <script type="text/javascript">
         $(document).ready(function() {
-            showdata(1); 
+            showdata(1);
         });
 
         function showdata(page) {
