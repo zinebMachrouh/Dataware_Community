@@ -79,14 +79,12 @@ include '../SQL/connect.php';
                 <?php
                 $id = $_GET['modifyOne'];
 
-                $query = "SELECT * FROM tag_question
-                            JOIN questions q 
-                            ON tag_question.question_id = q.id 
-                            WHERE q.id = :id ";
+                $query = "SELECT * FROM answers
+                            WHERE id = :id ";
                 $stmt = $conn->prepare($query);
                 $stmt->bindParam(':id', $id, PDO::PARAM_STR);
                 $stmt->execute();
-                $question_tags = $stmt->fetch(PDO::FETCH_ASSOC);
+                $answers = $stmt->fetch(PDO::FETCH_ASSOC);
                 
                 ?>
 
@@ -94,37 +92,25 @@ include '../SQL/connect.php';
                 <div class="my-6">
 
                     <div class="w-full ">
-                        <label for="title" class="text-lg font-bold text-dark">Title:</label>
+                        <label for="title" class="text-lg font-bold text-dark">My answer:</label>
                     </div>
 
-                <input type="text" id="title" name="title" value="<?php echo $question_tags['title']?>" class="border border-2 border-blutext w-full py-2 rounded-lg pl-2 mt-2">
+                <input type="text" id="title" name="title" value="<?php echo $answers['title']?>" class="border border-2 border-blutext w-full py-2 rounded-lg pl-2 mt-2">
                 </div>
-                <div>
-                    <label for="Content" class="text-lg font-bold text-dark">Content:</label>
-                </div>
-
-                <input type="text" id="content" name="content" value="<?php echo $question_tags['content']?>" required class="border border-2 border-blutext w-full py-2 rounded-lg pl-2 mt-2"> 
-
         </div>
         <div class="w-full my-4 px-8">
-            <input type="submit" value="Submit Question" name="modifyquestion" class="text-white-color bg-blutext  px-2 py-2 rounded-lg w-full text-lg">
+            <input type="submit" value="Submit Answer" name="modifyanswer" class="text-white-color bg-blutext  px-2 py-2 rounded-lg w-full text-lg">
         </div>
         </form>
     </div>
     <?php
-        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["modifyquestion"])) {
+        if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST["modifyanswer"])) {
             $id = $_GET['modifyOne'];
             $title = $_POST["title"];
-            $content = $_POST["content"];
         
-            $stmtM = $conn->prepare("UPDATE questions 
-                                    SET 
-                                        `title` = :title, 
-                                        `content` = :content
-                                    WHERE `id` = :id");
+            $stmtM = $conn->prepare("UPDATE answers SET `title` = :title WHERE `id` = :id");
         
             $stmtM->bindParam(':title', $title);
-            $stmtM->bindParam(':content', $content);
             $stmtM->bindParam(':id', $id); 
         
             $stmtM->execute();
