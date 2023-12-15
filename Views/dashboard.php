@@ -63,6 +63,7 @@ include "../SQL/connect.php";
             $stmt->execute();
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
             $_SESSION['user_id'] = $user['id'];
+            $_SESSION['role'] = $user['role'];
             $_SESSION['userId'] = $user['id'];
 
             if ($user) {
