@@ -87,13 +87,13 @@ if (isset($_POST['addquestion'])) {
         }
     }
     // echo "$user_id";
-  
-        $errormessage = "Question Added Successfully!";
-        header('Location: ./dashboard.php');
-        exit();
-    } else {
-        $errormessage = "Error.";
-    }
+
+    $errormessage = "Question Added Successfully!";
+    header('Location: ./dashboard.php');
+    exit();
+} else {
+    $errormessage = "Error.";
+}
 
 function trim_value(&$tag)
 {
@@ -195,7 +195,7 @@ function trim_value(&$tag)
                 </div>
 
                 <div>
-                    <input type="text" id="tags" name="tags" placeholder="Tag1, Tag2, Tag3" class="hidden border border-2 border-blutext w-full px-4 rounded-lg py-2 mt-2">
+                    <input type="text" id="tags" name="tags" placeholder="Tag1, Tag2, Tag3" required class="hidden border border-2 border-blutext w-full px-4 rounded-lg py-2 mt-2">
                 </div>
 
                 <div class="w-full my-4 px-8">
@@ -204,11 +204,11 @@ function trim_value(&$tag)
             </form>
         </div>
     </div>
-        <script>
-            document.querySelector(".addMoreTags").addEventListener("click", () => {
-                document.querySelector("#tags").classList.toggle("hidden")
-            })
-        </script>
+    <script>
+        document.querySelector(".addMoreTags").addEventListener("click", () => {
+            document.querySelector("#tags").classList.toggle("hidden")
+        })
+    </script>
 </body>
 
 </html>
