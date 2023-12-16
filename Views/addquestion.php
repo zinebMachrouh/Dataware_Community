@@ -3,7 +3,7 @@ ob_start();
 include '../SQL/connect.php';
 
 $errormessage = "";
-// pour afficher les tags li kynin f bd:
+// pour afficher les tags li kynin f bd bbbbbb:
 $tags = "SELECT DISTINCT * FROM tags ";
 $stmt = $conn->prepare($tags);
 $stmt->execute();
