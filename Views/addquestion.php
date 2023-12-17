@@ -195,7 +195,7 @@ function trim_value(&$tag)
                 </div>
 
                 <div>
-                    <input type="text" id="tags" name="tags" placeholder="Tag1, Tag2, Tag3" required class="hidden border border-2 border-blutext w-full px-4 rounded-lg py-2 mt-2">
+                    <input type="text" id="tags" name="tags" placeholder="Tag1, Tag2, Tag3" class="hidden border border-2 border-blutext w-full px-4 rounded-lg py-2 mt-2">
                 </div>
 
                 <div class="w-full my-4 px-8">
