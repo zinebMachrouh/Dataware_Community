@@ -3,7 +3,7 @@ ob_start();
 include '../SQL/connect.php';
 
 $errormessage = "";
-// pour afficher les tags li kynin f bd bbbbbb:
+// pour afficher les tags li kynin f bd:
 $tags = "SELECT DISTINCT * FROM tags ";
 $stmt = $conn->prepare($tags);
 $stmt->execute();
@@ -12,7 +12,7 @@ $tags_name = $stmt->fetchAll();
 function  valid_tags($tag_value)
 {
     global $conn;
-    $tags = "SELECT * FROM tags where name='$tag_value'";
+    $tags = "SELECT * FROM tags where name = '$tag_value'";
     $stmt = $conn->prepare($tags);
     $stmt->execute();
     return $stmt;
@@ -86,20 +86,57 @@ if (isset($_POST['addquestion'])) {
             }
         }
     }
-    // echo "$user_id";
+    $title = $_POST["title"];
+    $content = $_POST["content"];
+    $tags = $_POST["tags"];
 
-    $errormessage = "Question Added Successfully!";
-    header('Location: ./dashboard.php');
-    exit();
-} else {
-    $errormessage = "Error.";
+    // Insert question
+    $sql_question = "INSERT INTO questions (title, content, user_id, project_id) VALUES (:title, :content, :user_id, :project_id)";
+    $sth_question = $conn->prepare($sql_question);
+    $sth_question->execute(['title' => $title, 'content' => $content, 'user_id' => $user_id, 'project_id' => $project_id]);
+
+    if ($sth_question) {
+        $question_id = $conn->lastInsertId();
+
+        $tagsArray = explode(",", $tags);
+        array_walk($tagsArray, 'trim_value');
+
+        foreach ($tagsArray as $tag) {
+            // Insert tag
+            if ($tag != 0) {
+                $sql_tag = "INSERT INTO tags (name, user_id) VALUES (:name, :user_id)";
+                $sth_tag = $conn->prepare($sql_tag);
+                $sth_tag->execute(['name' => $tag, 'user_id' => $user_id]);
+            }
+
+            // hna kan kanjib last inserted tag_id
+            $tag_id = $conn->lastInsertId();
+
+            // Insert into the pivot li howa tag_question table
+            $sql_pivot = "INSERT INTO tag_question (question_id, tag_id) VALUES (:question_id, :tag_id)";
+            $sth_pivot = $conn->prepare($sql_pivot);
+            $sth_pivot->execute(['question_id' => $question_id, 'tag_id' => $tag_id]);
+        }
+
+        $errormessage = "Question Added Successfully!";
+        header('Location: ./dashboard.php');
+        exit();
+    } else {
+        $errormessage = "Error.";
+    }
 }
-
 function trim_value(&$tag)
 {
     $tag = trim($tag);
 }
 
+
+// pour afficher les tags li kynin f bd:
+$tags = "SELECT DISTINCT name FROM tags ";
+$stmt = $conn->prepare($tags);
+$stmt->execute();
+$tags_name = $stmt->fetchAll();
+// print_r($tags_name);
 ?>
 <!DOCTYPE html>
 <html>
