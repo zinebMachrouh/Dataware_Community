@@ -140,9 +140,31 @@ if (isset($_POST['Answer'])) {
     </div>
 
     <main>
-        <div class="flex flex gap-2 my-4 align-center" >
-            <div class="mr-5 flex align-center">
-                <h1 class="text-3xl font-bold text-white p-0">All Questions</h1>
+        <h1 class="text-xl font-bold">All Questions</h1>
+        <div class="flex gap-2 my-4">
+            <div class="filters flex flex-row gap-3">
+                <select name="project" id="project" class="px-2 py-1 rounded-lg" style="width: 150px;">
+                    <option value="" hidden> Projects <i class="fa-solid fa-filter" style="color: #00a8e8;"></i></option>
+                    <?php
+                    $email = $_SESSION['email'];
+                    $queryProject = "SELECT projects.*
+                            FROM projects
+                            INNER JOIN teams ON projects.id = teams.projectId
+                            INNER JOIN team_user ON teams.id = team_user.team_id
+                            INNER JOIN users ON team_user.user_id = users.id
+                            WHERE users.email = :email";
+                    $stmtProject = $conn->prepare($queryProject);
+                    $stmtProject->bindParam(':email', $email, PDO::PARAM_STR);
+                    $stmtProject->execute();
+                    $projects = $stmtProject->fetchAll(PDO::FETCH_ASSOC);
+
+                    foreach ($projects as $project) {
+                        echo "<option value='" . $project['id'] . "'>" . $project['name'] . "</option>";
+                    }
+
+                    ?>
+                </select>
+
             </div>
             <div class="flex-1 relative ml-3">
                 <div class="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -164,10 +186,11 @@ if (isset($_POST['Answer'])) {
 
             function showdata(page) {
                 $.ajax({
-                    url: 'pagination.php',
+                    url: 'pagination2.php',
                     method: 'post',
                     data: {
-                        page_no: page
+                        page_no: page,
+                        project_id : $_GET['project_id']
                     },
                     success: function(result) {
                         $("#result").html(result);
@@ -198,31 +221,6 @@ if (isset($_POST['Answer'])) {
 
 
     </main>
-    <script type="text/javascript">
-        $(document).ready(function() {
-            showdata(1);
-        });
-
-        function showdata(page) {
-            $.ajax({
-                url: 'pagination.php',
-                method: 'post',
-                data: {
-                    page_no: page
-                },
-                success: function(result) {
-                    $("#result").html(result);
-                }
-            });
-        }
-
-        $(document).on("click", ".pagination a", function(e) {
-            e.preventDefault();
-            var page = $(this).data('page');
-            showdata(page);
-        });
-    </script>
-
 
     <!-- ajax search -->
     <script type="text/javascript">

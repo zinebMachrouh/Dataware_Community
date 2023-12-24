@@ -12,423 +12,48 @@ include "../SQL/connect.php";
     <title>Dashboard</title>
     <link rel="shortcut icon" href="../public/brand.png" type="image/x-icon">
     <script src="https://kit.fontawesome.com/6e1faf1eda.js" crossorigin="anonymous"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
+    <link rel="stylesheet" href="../public/style1.css" type="text/css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- jquery cdn -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <link rel="shortcut icon" href="../public/brand.png" type="image/x-icon">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <script src="my_jquery_functions.js"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                fontFamily: {
+                    'Saira': ['Saira Condensed', 'sans-serif']
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins';
+                },
+                extend: {
+                    colors: {
+                        'dark': '#1e1b4b',
+                        'white-color': '#F6F6F6',
+                        'purp-color': '#8F51E1',
+                        'blue-color': '#5476E4',
+                        'blue-primary': '#308BE6',
+                        'blutext': '#00A8E8',
+                        'question': '#008fd4',
+                        'black-color': '# 1E1 E1E ',
+                    },
+
+                },
+            },
         }
-
-        header {
-            width: 100%;
-            height: 9vh;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0px 50px;
-            position: fixed;
-            top: 0;
-            background-color: #fafafa;
-            z-index: 2;
-            box-shadow: #0000002e 5px 0px 10px 0px;
-        }
-
-        header h2 {
-            display: flex;
-            align-items: center;
-            color: #1e1e1e;
-            font-size: 30px;
-
-        }
-
-        header nav {
-            display: flex;
-            align-items: center;
-            gap: 30px;
-        }
-
-        header nav a {
-            color: #008fd4;
-            text-decoration: none;
-            border-bottom: 2px #fafafa solid;
-            padding: 7px 15px;
-            /* border-radius: 10px; */
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-radius: 10px 10px 0px 0px;
-        }
-
-        header nav a:hover {
-            border-bottom: 2px #008fd4 solid;
-            background-color: #def3ff;
-            transition: all ease-in-out .5s;
-        }
-
-        main {
-            margin-top: 9vh;
-            background: url(../public/bg.png) no-repeat;
-            background-position: center;
-            background-size: cover;
-            height: fit-content;
-            width: 100%;
-            padding: 20px 50px;
-        }
-
-        div.cards {
-            display: flex;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            align-items: center;
-            background-color: #fafafa;
-            padding: 0px;
-            gap: 90px;
-            background-color: transparent;
-        }
-
-        .title {
-            color: #fafafa;
-            font-size: 28px;
-        }
-
-        .sub-title {
-            color: #def3ff;
-            font-size: 24px;
-            margin-bottom: 15px;
-            margin-top: 25px;
-
-        }
-
-        .card {
-            background-color: #fafafa;
-            width: 370px;
-            /* height: 370px; */
-            border-radius: 10px;
-            box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .card-top {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            padding: 15px 15px 5px;
-        }
-
-        .card-top h4 {
-            background-color: #008fd4;
-            font-size: 30px;
-            width: 65px;
-            height: 65px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 200px;
-            letter-spacing: 1px;
-            color: #fafafa;
-        }
-
-        .card-top h2 {
-            font-size: 28px;
-        }
-
-        .card-body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-            padding: 10px 15px 5px;
-
-        }
-
-        .card-body p {
-            font-size: 18px;
-        }
-
-        .card-body p:nth-child(2) {
-            color: #308BE6;
-        }
-
-        .card-btm {
-            display: flex;
-            align-items: center;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .card-btm a:nth-child(1) {
-            text-align: center;
-            color: #8d99ae;
-            width: 100%;
-            text-decoration: none;
-            font-size: 16px;
-        }
-
-        .card-btm a:nth-child(2) {
-            background-color: #00a6e83f;
-            padding: 15px 15px;
-            text-align: center;
-            font-weight: 600;
-            color: #308BE6;
-            width: 100%;
-            text-decoration: none;
-            transition: all ease 3s;
-            font-size: 20px;
-            margin-top: 20px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            justify-content: center;
-            padding-left: 45px;
-        }
-
-        .card-btm a:nth-child(2) i {
-            color: rgba(48, 139, 230, 0.7);
-            opacity: 0;
-        }
-
-        .card-btm a:nth-child(2):hover {
-            padding-left: 0px;
-            transition: all ease-in-out .5s;
-        }
-
-        .card-btm a:nth-child(2):hover i {
-            opacity: 1;
-            transition: all ease-in-out .5s;
-
-        }
-
-        .popup {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.5);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            display: none;
-        }
-
-        .popup-content {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-            overflow: hidden;
-            width: 400px;
-        }
-
-        .close {
-            cursor: pointer;
-            font-size: 18px;
-        }
-
-        .popup-header {
-            background: #008fd4;
-            color: #fff;
-            padding: 10px 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .popup-body {
-            padding: 20px;
-        }
-
-        .popup-body form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .popup-body form input,
-        .popup-body form select {
-            width: 100%;
-            padding: 10px 7px;
-            font-size: 16px;
-            border-radius: 5px;
-            outline: none;
-            border: #1e1e1e4c 1px solid;
-            margin-bottom: 15px;
-        }
-
-        .popup-body form label {
-            color: #008fd4;
-            font-size: 16px;
-            font-weight: 600;
-        }
-
-        .popup-footer {
-            text-align: right;
-            padding: 10px 0px;
-            background: #f8f9fa;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            justify-content: flex-end;
-        }
-
-        .popup-footer button {
-            background-color: #008fd4;
-            color: #fafafa;
-            padding: 7px 10px;
-            border: none;
-            outline: none;
-            font-size: 16px;
-            border-radius: 7px;
-        }
-
-
-        .pro {
-            margin-top: 30px;
-        }
-
-        .popup-body p {
-            margin: 5px 0px;
-        }
-
-        .popup-footer a {
-            background-color: #008fd4;
-            color: #fafafa;
-            padding: 7px 10px;
-            border: none;
-            outline: none;
-            font-size: 16px;
-            border-radius: 7px;
-            text-decoration: none;
-        }
-
-        .delete {
-            background-color: #E33535 !important;
-        }
-
-        .fullPage {
-            height: 79.8vh;
-            overflow: hidden;
-        }
-
-        .fullPage h4 {
-            color: #def3ff;
-
-        }
-
-        .side {
-            height: 160px;
-            width: 10px;
-            background-color: #008fd4;
-            border-radius: 15px;
-            margin-right: 10px;
-        }
-
-        .team {
-            padding: 10px;
-            display: flex;
-            background-color: #fafafa;
-            border-radius: 10px;
-            height: fit-content;
-            width: 300px;
-        }
-
-        .card-main h4 {
-            margin-bottom: 15px;
-        }
-
-        .teamTable {
-            background-color: #fafafa;
-            border: 2px solid #008fd4;
-            border-collapse: collapse;
-            width: 100%;
-        }
-
-        th,
-        td {
-            border-bottom: 2px solid #008fd4;
-            padding: 15px;
-            text-align: left;
-            width: 200px;
-            color: #1e1e1e;
-        }
-
-        th {
-            background-color: #def3ff;
-        }
-
-        td a {
-            text-decoration: none;
-            margin-right: 20px;
-            transition: all ease-in-out .3s;
-        }
-
-        td a:nth-child(1) {
-            color: #008fd4;
-        }
-
-        td a:nth-child(2) {
-            color: #5476E4;
-        }
-
-        td a:nth-child(3) {
-            color: #E33535;
-        }
-
-        td p {
-            padding: 7px 10px;
-            font-weight: 600;
-            width: 100px;
-            text-align: center;
-            border-radius: 25px;
-        }
-
-        .done {
-            background-color: #3ebf9d68;
-            color: #3ebf9d;
-        }
-
-        .active {
-            background-color: #00a6e83f;
-            color: #008fd4;
-
-        }
-
-        .add {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .add a {
-            padding: 10px 15px;
-            background: rgba(222, 243, 255, 0.31);
-            border-radius: 10px;
-            box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
-            backdrop-filter: blur(9.2px);
-            color: #def3ff;
-            font-weight: 500;
-            letter-spacing: 1px;
-            text-decoration: none;
-            transition: all ease-in-out .3s;
-            -webkit-backdrop-filter: blur(9.2px);
-        }
-
-        .add a:hover {
-            transform: scale(1.1);
-            color: #fff;
-        }
-    </style>
+    </script>
 </head>
 
 <body>
     <header>
         <h2>Data<img src=../public/brand.png alt=brand />are</h2>
         <nav>
-            <a href="#"><i class="fa-solid fa-house"></i> Home</a>
+            <a href="#">
+                <svg xmlns="http://www.w3.org/2000/svg" height="16" width="18" viewBox="0 0 576 512">
+                    <path fill="#008fd4" d="M575.8 255.5c0 18-15 32.1-32 32.1h-32l.7 160.2c0 2.7-.2 5.4-.5 8.1V472c0 22.1-17.9 40-40 40H456c-1.1 0-2.2 0-3.3-.1c-1.4 .1-2.8 .1-4.2 .1H416 392c-22.1 0-40-17.9-40-40V448 384c0-17.7-14.3-32-32-32H256c-17.7 0-32 14.3-32 32v64 24c0 22.1-17.9 40-40 40H160 128.1c-1.5 0-3-.1-4.5-.2c-1.2 .1-2.4 .2-3.6 .2H104c-22.1 0-40-17.9-40-40V360c0-.9 0-1.9 .1-2.8V287.6H32c-18 0-32-14-32-32.1c0-9 3-17 10-24L266.4 8c7-7 15-8 22-8s15 2 21 7L564.8 231.5c8 7 12 15 11 24z" />
+                </svg>
+                Home
+            </a>
             <?php
             $email = $_SESSION['email'];
 
@@ -436,14 +61,37 @@ include "../SQL/connect.php";
             $stmt = $conn->prepare($query);
             $stmt->bindParam(':email', $email, PDO::PARAM_STR);
             $stmt->execute();
-
             $user = $stmt->fetch(PDO::FETCH_ASSOC);
+            $_SESSION['user_id'] = $user['id'];
+            $_SESSION['role'] = $user['role'];
+            $_SESSION['userId'] = $user['id'];
 
             if ($user) {
                 if ($user['role'] === 0) {
-                    echo '<a href="#myTeams"><i class="fa-solid fa-user-group"></i>Teams</a><a href="#myProjects"><i class="fa-solid fa-bars-progress"></i>Projects</a>';
+                    echo '<a href="#myTeams">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="16" width="20" viewBox="0 0 640 512">
+                                <path fill="#008fd4" d="M72 88a56 56 0 1 1 112 0A56 56 0 1 1 72 88zM64 245.7C54 256.9 48 271.8 48 288s6 31.1 16 42.3V245.7zm144.4-49.3C178.7 222.7 160 261.2 160 304c0 34.3 12 65.8 32 90.5V416c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V389.2C26.2 371.2 0 332.7 0 288c0-61.9 50.1-112 112-112h32c24 0 46.2 7.5 64.4 20.3zM448 416V394.5c20-24.7 32-56.2 32-90.5c0-42.8-18.7-81.3-48.4-107.7C449.8 183.5 472 176 496 176h32c61.9 0 112 50.1 112 112c0 44.7-26.2 83.2-64 101.2V416c0 17.7-14.3 32-32 32H480c-17.7 0-32-14.3-32-32zm8-328a56 56 0 1 1 112 0A56 56 0 1 1 456 88zM576 245.7v84.7c10-11.3 16-26.1 16-42.3s-6-31.1-16-42.3zM320 32a64 64 0 1 1 0 128 64 64 0 1 1 0-128zM240 304c0 16.2 6 31 16 42.3V261.7c-10 11.3-16 26.1-16 42.3zm144-42.3v84.7c10-11.3 16-26.1 16-42.3s-6-31.1-16-42.3zM448 304c0 44.7-26.2 83.2-64 101.2V448c0 17.7-14.3 32-32 32H288c-17.7 0-32-14.3-32-32V405.2c-37.8-18-64-56.5-64-101.2c0-61.9 50.1-112 112-112h32c61.9 0 112 50.1 112 112z"/>
+                            </svg>
+                            Teams
+                        </a>
+                        <a href="#myProjects">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512">
+                                <path fill="#008fd4" d="M152.1 38.2c9.9 8.9 10.7 24 1.8 33.9l-72 80c-4.4 4.9-10.6 7.8-17.2 7.9s-12.9-2.4-17.6-7L7 113C-2.3 103.6-2.3 88.4 7 79s24.6-9.4 33.9 0l22.1 22.1 55.1-61.2c8.9-9.9 24-10.7 33.9-1.8zm0 160c9.9 8.9 10.7 24 1.8 33.9l-72 80c-4.4 4.9-10.6 7.8-17.2 7.9s-12.9-2.4-17.6-7L7 273c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l22.1 22.1 55.1-61.2c8.9-9.9 24-10.7 33.9-1.8zM224 96c0-17.7 14.3-32 32-32H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H256c-17.7 0-32-14.3-32-32zm0 160c0-17.7 14.3-32 32-32H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H256c-17.7 0-32-14.3-32-32zM160 416c0-17.7 14.3-32 32-32H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H192c-17.7 0-32-14.3-32-32zM48 368a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/>
+                            </svg>
+                            Projects
+                        </a>';
                 } else if ($user['role'] === 3) {
-                    echo '<a href="./projects.php"><i class="fa-solid fa-bars-progress"></i>Projects</a>';
+                    echo '<a href="./projects.php">
+                            <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512">
+                                <path fill="#008fd4" d="M152.1 38.2c9.9 8.9 10.7 24 1.8 33.9l-72 80c-4.4 4.9-10.6 7.8-17.2 7.9s-12.9-2.4-17.6-7L7 113C-2.3 103.6-2.3 88.4 7 79s24.6-9.4 33.9 0l22.1 22.1 55.1-61.2c8.9-9.9 24-10.7 33.9-1.8zm0 160c9.9 8.9 10.7 24 1.8 33.9l-72 80c-4.4 4.9-10.6 7.8-17.2 7.9s-12.9-2.4-17.6-7L7 273c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l22.1 22.1 55.1-61.2c8.9-9.9 24-10.7 33.9-1.8zM224 96c0-17.7 14.3-32 32-32H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H256c-17.7 0-32-14.3-32-32zm0 160c0-17.7 14.3-32 32-32H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H256c-17.7 0-32-14.3-32-32zM160 416c0-17.7 14.3-32 32-32H480c17.7 0 32 14.3 32 32s-14.3 32-32 32H192c-17.7 0-32-14.3-32-32zM48 368a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/>
+                            </svg>
+                            Projects
+                        </a>';
+                } else if ($user['role'] === 1) {
+                    echo '<a href="./statistic.php">
+                        <svg xmlns="http://www.w3.org/2000/svg" height="16" width="14" viewBox="0 0 448 512"><!--!Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free Copyright 2023 Fonticons, Inc.--><path fill="#008fd4" d="M160 80c0-26.5 21.5-48 48-48h32c26.5 0 48 21.5 48 48V432c0 26.5-21.5 48-48 48H208c-26.5 0-48-21.5-48-48V80zM0 272c0-26.5 21.5-48 48-48H80c26.5 0 48 21.5 48 48V432c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V272zM368 96h32c26.5 0 48 21.5 48 48V432c0 26.5-21.5 48-48 48H368c-26.5 0-48-21.5-48-48V144c0-26.5 21.5-48 48-48z"/></svg>
+                        Statistics
+                        </a>';
                 } else {
                     echo '';
                 }
@@ -452,9 +100,24 @@ include "../SQL/connect.php";
             }
 
             ?>
-            <a href="./community.php"><i class="fa-solid fa-comments"></i> Community</a>
-            <a href="#" onclick="openMyPopup()"><i class="fa-solid fa-user"></i> Profile</a>
-            <a href="./logout.php"><i class="fa-solid fa-arrow-right-from-bracket"></i> LogOut</a>
+            <a href="#" onclick="openMyPopup()">
+                <svg xmlns="http://www.w3.org/2000/svg" height="16" width="14" viewBox="0 0 448 512">
+                    <path fill="#008fd4" d="M224 256A128 128 0 1 0 224 0a128 128 0 1 0 0 256zm-45.7 48C79.8 304 0 383.8 0 482.3C0 498.7 13.3 512 29.7 512H418.3c16.4 0 29.7-13.3 29.7-29.7C448 383.8 368.2 304 269.7 304H178.3z" />
+                </svg>
+                Profile
+            </a>
+            <a href="./community.php">
+                <svg xmlns="http://www.w3.org/2000/svg" height="16" width="20" viewBox="0 0 640 512">
+                    <path fill="#008fd4" d="M208 352c114.9 0 208-78.8 208-176S322.9 0 208 0S0 78.8 0 176c0 38.6 14.7 74.3 39.6 103.4c-3.5 9.4-8.7 17.7-14.2 24.7c-4.8 6.2-9.7 11-13.3 14.3c-1.8 1.6-3.3 2.9-4.3 3.7c-.5 .4-.9 .7-1.1 .8l-.2 .2 0 0 0 0C1 327.2-1.4 334.4 .8 340.9S9.1 352 16 352c21.8 0 43.8-5.6 62.1-12.5c9.2-3.5 17.8-7.4 25.3-11.4C134.1 343.3 169.8 352 208 352zM448 176c0 112.3-99.1 196.9-216.5 207C255.8 457.4 336.4 512 432 512c38.2 0 73.9-8.7 104.7-23.9c7.5 4 16 7.9 25.2 11.4c18.3 6.9 40.3 12.5 62.1 12.5c6.9 0 13.1-4.5 15.2-11.1c2.1-6.6-.2-13.8-5.8-17.9l0 0 0 0-.2-.2c-.2-.2-.6-.4-1.1-.8c-1-.8-2.5-2-4.3-3.7c-3.6-3.3-8.5-8.1-13.3-14.3c-5.5-7-10.7-15.4-14.2-24.7c24.9-29 39.6-64.7 39.6-103.4c0-92.8-84.9-168.9-192.6-175.5c.4 5.1 .6 10.3 .6 15.5z" />
+                </svg>
+                Community
+            </a>
+            <a href="./logout.php">
+                <svg xmlns="http://www.w3.org/2000/svg" height="16" width="16" viewBox="0 0 512 512">
+                    <path fill="#008fd4" d="M377.9 105.9L500.7 228.7c7.2 7.2 11.3 17.1 11.3 27.3s-4.1 20.1-11.3 27.3L377.9 406.1c-6.4 6.4-15 9.9-24 9.9c-18.7 0-33.9-15.2-33.9-33.9l0-62.1-128 0c-17.7 0-32-14.3-32-32l0-64c0-17.7 14.3-32 32-32l128 0 0-62.1c0-18.7 15.2-33.9 33.9-33.9c9 0 17.6 3.6 24 9.9zM160 96L96 96c-17.7 0-32 14.3-32 32l0 256c0 17.7 14.3 32 32 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32l-64 0c-53 0-96-43-96-96L0 128C0 75 43 32 96 32l64 0c17.7 0 32 14.3 32 32s-14.3 32-32 32z" />
+                </svg>
+                LogOut
+            </a>
         </nav>
     </header>
     <div id="myPopup" class="popup">
@@ -748,6 +411,7 @@ include "../SQL/connect.php";
                         <th>Description</th>
                         <th>Status</th>
                         <th>Product Owner</th>
+                        <th>Action</th>
                     </tr>";
                     $query = "SELECT projects.*
                         FROM users
@@ -764,7 +428,7 @@ include "../SQL/connect.php";
                     foreach ($projects as $project) {
                         echo "
                         <tr>
-                            <td>{$project['name']}</td>
+                            <td><a href='questionProject.php?project_id=" . $project['id'] . "'>{$project['name']}</a></td>
                             <td>{$project['date_start']}</td>
                             <td>{$project['date_end']}</td>
                             <td>{$project['description']}</td>
@@ -776,16 +440,18 @@ include "../SQL/connect.php";
                         $stmtPO->execute();
                         $po = $stmtPO->fetch(PDO::FETCH_ASSOC);
 
+                        echo " 
+                        </td>
+                            
+                        ";
                         if ($project['productOwner'] === NULL) {
-                            echo "<td>-</td>
-                            </tr>";
+                            echo "<td>-</td>";
                         } else {
                             echo "
-                                <td>{$po['fname']} {$po['lname']}</td>
-                            </tr>";
+                                <td>{$po['fname']} {$po['lname']}</td>";
                         }
+                        echo "<td><a class='active rounded-full px-2 py-2' href='addquestion.php?project_id={$project['id']}&user_id={$user['id']}'><i class='fa-solid fa-plus'></i><span class='font-semibold'>Add question</span></a></td></tr>";
                     }
-                    echo "</div>";
                 }
             }
             ?>
@@ -881,6 +547,7 @@ include "../SQL/connect.php";
             </div>
         </div>
     </main>
+
 
     <script>
         function openPopup(userID) {
